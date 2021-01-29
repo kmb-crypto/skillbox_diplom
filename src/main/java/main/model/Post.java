@@ -10,6 +10,7 @@ import java.util.Set;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private int id;
 
     @Column(name = "is_active", nullable = false)
@@ -35,8 +36,17 @@ public class Post {
     @Column(name = "view_count", nullable = false)
     private int viewCount;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostComment> postComments;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PostVotes> postVotes;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "tag2post",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+    private Set<Tag> tags;
 
     public Post() {
     }
@@ -48,6 +58,8 @@ public class Post {
     public void setId(int id) {
         this.id = id;
     }
+
+
 
     public byte getIsActive() {
         return isActive;
@@ -103,5 +115,29 @@ public class Post {
 
     public void setViewCount(int viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public Set<PostComment> getPostComments() {
+        return postComments;
+    }
+
+    public void setPostComments(Set<PostComment> postComments) {
+        this.postComments = postComments;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Set<PostVotes> getPostVotes() {
+        return postVotes;
+    }
+
+    public void setPostVotes(Set<PostVotes> postVotes) {
+        this.postVotes = postVotes;
     }
 }

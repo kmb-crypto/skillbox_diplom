@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "global_settings")
-public class GlobalSettings {
+public class GlobalSetting {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,7 +19,7 @@ public class GlobalSettings {
     @Column(nullable = false)
     private String value;
 
-    public GlobalSettings() {
+    public GlobalSetting() {
     }
 
     public int getId() {

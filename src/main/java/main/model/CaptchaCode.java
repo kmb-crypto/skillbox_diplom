@@ -6,9 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 
-public class CaptchaCodes {
+public class CaptchaCode {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private int id;
 
     @Column(nullable = false)
@@ -20,7 +21,7 @@ public class CaptchaCodes {
     @Column(name = "secret_code", nullable = false)
     private short secretCode;
 
-    public CaptchaCodes() {
+    public CaptchaCode() {
     }
 
     public int getId() {

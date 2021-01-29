@@ -7,13 +7,16 @@ import javax.persistence.*;
 public class Tag2Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private int id;
 
-    @Column(name="post_id", nullable = false)
-    private int postId;
+    @ManyToOne
+    @JoinColumn(name="post_id", referencedColumnName = "id")
+    private Post post;
 
-    @Column(name="tag_id", nullable = false)
-    private int tagId;
+    @ManyToOne
+    @JoinColumn(name="tag_id", referencedColumnName = "id")
+    private Tag tag;
 
     public Tag2Post() {
     }
@@ -26,19 +29,19 @@ public class Tag2Post {
         this.id = id;
     }
 
-    public int getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public int getTagId() {
-        return tagId;
+    public Tag getTag() {
+        return tag;
     }
 
-    public void setTagId(int tagId) {
-        this.tagId = tagId;
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 }

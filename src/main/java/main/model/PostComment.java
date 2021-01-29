@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 public class PostComment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private int id;
 
     @Column(name = "parent_id", nullable = false)
@@ -17,8 +18,9 @@ public class PostComment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "user_id", nullable = false)
-    private int userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private Timestamp time;
@@ -53,12 +55,12 @@ public class PostComment {
         this.post = post;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Timestamp getTime() {

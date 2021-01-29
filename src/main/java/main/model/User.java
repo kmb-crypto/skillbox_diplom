@@ -10,12 +10,13 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private int id;
 
-    @Column(name="is_moderator", nullable = false)
+    @Column(name = "is_moderator", nullable = false)
     private byte isModerator;
 
-    @Column(name="reg_time", nullable = false)
+    @Column(name = "reg_time", nullable = false)
     private Timestamp regTime;
 
     @Column(nullable = false)
@@ -32,8 +33,14 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String photo;  //link to photo
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> posts;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<PostComment> postComments;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<PostVotes> postVotes;
 
     public User() {
     }
@@ -100,5 +107,21 @@ public class User {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
+    public Set<PostComment> getPostComments() {
+        return postComments;
+    }
+
+    public void setPostComments(Set<PostComment> postComments) {
+        this.postComments = postComments;
     }
 }
