@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
 
+
     }
 }
 
@@ -28,7 +29,7 @@ public class Main {
 //    ApiGeneralController - для прочих запросов к API.
 //+   - Подключить к приложению frontend, разместив содержимое архива “frontend-dist_XXXX-XX-XX.zip” в директории “resources”: файлы из папки static в /resources/static/, а файл /resources/tempaltes/index.html - в директорию/resources/templates/.
 //+  - Сделать так, чтобы при входе на главную страницу открывался шаблон index.html (аналогично тому, как это сделано в проекте “BookLibrary”).
-//   - Создать структуру базы данных с помощью сущностей Hibernate в пакете model, по примеру проекта “BookLibrary”. Структура базы данных описана в файле “db.pdf”.
+//+   - Создать структуру базы данных с помощью сущностей Hibernate в пакете model, по примеру проекта “BookLibrary”. Структура базы данных описана в файле “db.pdf”.
 //
 //   - Прописать все необходимые связи (ManyToMany, OneToMany, ManyToOne) между @Entity классов.
 //

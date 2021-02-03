@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "global_settings")
+
 public class GlobalSetting {
 
     @Id
