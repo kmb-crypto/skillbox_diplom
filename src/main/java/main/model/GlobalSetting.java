@@ -1,10 +1,14 @@
 package main.model;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "global_settings")
-
+@Component
+@Scope("prototype")
 public class GlobalSetting {
 
     @Id
