@@ -1,5 +1,7 @@
 package main.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,49 +15,26 @@ public class GlobalSetting {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter
+    @Setter
     private int id;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String code;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String name;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String value;
 
     public GlobalSetting() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 }

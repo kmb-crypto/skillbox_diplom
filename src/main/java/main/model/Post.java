@@ -1,5 +1,8 @@
 package main.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -11,133 +14,67 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
+    @Getter
+    @Setter
     private int id;
 
     @Column(name = "is_active", nullable = false)
+    @Getter
+    @Setter
     private byte isActive;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "moderation_status", nullable = false, columnDefinition = "enum('NEW', 'ACCEPTED', 'DECLINED')")
+    @Getter
+    @Setter
     private ModerationStatus moderationStatus;
 
     @Column(name = "moderator_id")
+    @Getter
+    @Setter
     private int moderatorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @Getter
+    @Setter
     private User user;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private Timestamp time;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private String title;
 
     @Column(name = "view_count", nullable = false)
+    @Getter
+    @Setter
     private int viewCount;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Getter
+    @Setter
     private Set<PostComment> postComments;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Getter
+    @Setter
     private Set<PostVotes> postVotes;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "tag2post",
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+    @Getter
+    @Setter
     private Set<Tag> tags;
 
     public Post() {
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-
-
-    public byte getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(byte isActive) {
-        this.isActive = isActive;
-    }
-
-    public ModerationStatus getModerationStatus() {
-        return moderationStatus;
-    }
-
-    public void setModerationStatus(ModerationStatus moderationStatus) {
-        this.moderationStatus = moderationStatus;
-    }
-
-    public int getModeratorId() {
-        return moderatorId;
-    }
-
-    public void setModeratorId(int moderatorId) {
-        this.moderatorId = moderatorId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Timestamp getTime() {
-        return time;
-    }
-
-    public void setTime(Timestamp time) {
-        this.time = time;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getViewCount() {
-        return viewCount;
-    }
-
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
-    }
-
-    public Set<PostComment> getPostComments() {
-        return postComments;
-    }
-
-    public void setPostComments(Set<PostComment> postComments) {
-        this.postComments = postComments;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
-
-    public Set<PostVotes> getPostVotes() {
-        return postVotes;
-    }
-
-    public void setPostVotes(Set<PostVotes> postVotes) {
-        this.postVotes = postVotes;
-    }
 }

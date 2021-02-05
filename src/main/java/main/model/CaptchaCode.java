@@ -1,5 +1,8 @@
 package main.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,51 +13,28 @@ public class CaptchaCode {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
+    @Getter
+    @Setter
     private int id;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private Timestamp time;
 
     @Column(nullable = false)
+    @Getter
+    @Setter
     private short code;
 
     @Column(name = "secret_code", nullable = false)
+    @Getter
+    @Setter
     private short secretCode;
 
     public CaptchaCode() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Timestamp getTime() {
-        return time;
-    }
-
-    public void setTime(Timestamp time) {
-        this.time = time;
-    }
-
-    public short getCode() {
-        return code;
-    }
-
-    public void setCode(short code) {
-        this.code = code;
-    }
-
-    public short getSecretCode() {
-        return secretCode;
-    }
-
-    public void setSecretCode(short secretCode) {
-        this.secretCode = secretCode;
-    }
 }
 
 
