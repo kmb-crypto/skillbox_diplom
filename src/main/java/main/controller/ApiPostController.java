@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -21,9 +22,15 @@ public class ApiPostController {
         this.postService = postService;
     }
 
-    @GetMapping("/post")
-    private ResponseEntity postResponse() {
-        PostsResponse postsResponse = postService.postResponse();
+    @GetMapping(value = "/post",
+            params = {"offset", "limit", "mode"})
+    private ResponseEntity getPosts(
+            @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit,
+            @RequestParam("mode") String mode) {
+        //System.out.println("offset " + offset + ", limit " + limit + ", mode " + mode);
+        PostsResponse postsResponse = postService.getPosts();
+
         if (postsResponse.getCount() == 0) {
             return new ResponseEntity(postsResponse, HttpStatus.OK);
         } else {

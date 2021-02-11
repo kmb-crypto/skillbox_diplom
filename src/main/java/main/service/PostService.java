@@ -13,7 +13,7 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
-    public PostsResponse postResponse() {
+    public PostsResponse getPosts() {
 
         if (postRepository.count() == 0) {
             return new PostsResponse(0, new ArrayList<>());
