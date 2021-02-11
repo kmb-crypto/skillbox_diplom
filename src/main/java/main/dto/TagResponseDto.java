@@ -1,9 +1,9 @@
-package main.api.response;
+package main.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class TagResponseObject {
+public class TagResponseDto {
 
     @Getter
     @Setter

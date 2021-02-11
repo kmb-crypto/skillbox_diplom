@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiPostController {
 
-    @Autowired
     private PostService postService;
+
+    @Autowired
+    public ApiPostController(PostService postService) {
+        this.postService = postService;
+    }
 
     @GetMapping("/post")
     private ResponseEntity postResponse() {

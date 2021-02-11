@@ -1,12 +1,12 @@
-package main.api.response;
+package main.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import main.model.User;
 
 import java.sql.Timestamp;
 
-public class PostResponseObject {
+public class PostResponseDto {
     @Getter
     @Setter
     private int id;
@@ -17,7 +17,8 @@ public class PostResponseObject {
 
     @Getter
     @Setter
-    private User user;
+    @JsonProperty("user")
+    private PostResponseUserDto userDto;
 
     @Getter
     @Setter

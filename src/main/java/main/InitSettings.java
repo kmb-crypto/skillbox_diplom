@@ -1,5 +1,6 @@
 package main;
 
+import lombok.Getter;
 import main.model.GlobalSetting;
 import main.repository.GlobalSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,17 +10,23 @@ import javax.annotation.PostConstruct;
 
 @Component
 public class InitSettings {
-    private final String MULTI_USER_CODE = "MULTIUSER_MODE";
-    private final String MULTI_USER_NAME = "Многопользовательский режим";
+    @Getter
+    private static final String MULTI_USER_CODE = "MULTIUSER_MODE";
+    private static final String MULTI_USER_NAME = "Многопользовательский режим";
 
-    private final String POST_PREMODERATION_CODE = "POST_PREMODERATION";
-    private final String POST_PREMODERATION_NAME = "Премодерация постов";
+    @Getter
+    private static final String POST_PREMODERATION_CODE = "POST_PREMODERATION";
+    private static final String POST_PREMODERATION_NAME = "Премодерация постов";
 
-    private final String STATISTIC_IS_PUBLIC_CODE = "STATISTIC_IS_PUBLIC";
-    private final String STATISTIC_IS_PUBLIC_NAME = "Показывать всем статистику блога";
+    @Getter
+    private static final String STATISTIC_IS_PUBLIC_CODE = "STATISTIC_IS_PUBLIC";
+    private static final String STATISTIC_IS_PUBLIC_NAME = "Показывать всем статистику блога";
 
-    private final String YES = "Yes";
-    private final String NO = "NO";
+    @Getter
+    private static final String YES = "YES";
+
+    @Getter
+    private static final String NO = "NO";
 
     @Autowired
     private GlobalSettingsRepository globalSettingsRepository;
