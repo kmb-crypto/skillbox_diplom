@@ -29,7 +29,7 @@ public class ApiPostController {
             @RequestParam("limit") int limit,
             @RequestParam("mode") String mode) {
         //System.out.println("offset " + offset + ", limit " + limit + ", mode " + mode);
-        PostsResponse postsResponse = postService.getPosts();
+        PostsResponse postsResponse = postService.getPosts(offset, limit, mode);
 
         if (postsResponse.getCount() == 0) {
             return new ResponseEntity(postsResponse, HttpStatus.OK);

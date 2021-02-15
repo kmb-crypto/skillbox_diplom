@@ -24,7 +24,7 @@ public class Post extends BaseEntity {
     private ModerationStatus moderationStatus;
 
     @Column(name = "moderator_id")
-    private int moderatorId;
+    private Integer moderatorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -35,6 +35,9 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String text;
 
     @Column(name = "view_count", nullable = false)
     private int viewCount;

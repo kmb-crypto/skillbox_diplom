@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TagResponseDto {
+public class PostsResponseUserDto {
 
+    private int id;
     private String name;
-    private float weight;
 }

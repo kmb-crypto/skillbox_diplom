@@ -29,3 +29,9 @@ public class PostVotes extends BaseEntity {
     private byte value;
 
 }
+
+//    id INT NOT NULL AUTO_INCREMENT    id лайка/дизлайка
+//    user_id INT NOT NULL              тот, кто поставил лайк / дизлайк
+//    post_id INT NOT NULL              пост, которому поставлен лайк / дизлайк
+//    time DATETIME NOT NULL            дата и время лайка / дизлайка
+//    value TINYINT NOT NULL            лайк или дизлайк: 1 или -1
