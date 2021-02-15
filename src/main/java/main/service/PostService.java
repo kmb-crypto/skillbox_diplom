@@ -52,16 +52,18 @@ public class PostService {
     }
 
     public PostsResponse getPosts(int offset, int limit, final String mode) {
-        int count = (int) postRepository.count();
-        if (count == 0) {
+
+        //System.out.println("getPosts: offset " + offset + ", limit " + limit + ", mode " + mode);
+        if (postRepository.count() == 0) {
             return new PostsResponse(0, new ArrayList<>());
         } else {
             if (limit == 0) {
                 limit = defaultPageLimit;
             }
-            Pageable pageable = PageRequest.of(offset, limit, createSort(mode));
+            Pageable pageable = PageRequest.of((offset / limit), limit, createSort(mode));
             Collection<Post> postsCollection = postRepository.findAllPosts(pageable);
-
+            int count = postRepository.countAllPosts();
+            //System.out.println("count = " + count);
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
 
             postsCollection.forEach(p -> {
