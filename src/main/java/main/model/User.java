@@ -1,6 +1,5 @@
 package main.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,7 +43,7 @@ public class User extends BaseEntity {
     private Set<PostComment> postComments;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<PostVotes> postVotes;
+    private Set<PostVote> postVotes;
 
 
 }

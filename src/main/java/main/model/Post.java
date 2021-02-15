@@ -46,7 +46,7 @@ public class Post extends BaseEntity {
     private Set<PostComment> postComments;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PostVotes> postVotes;
+    private Set<PostVote> postVotes;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "tag2post",

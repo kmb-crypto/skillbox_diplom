@@ -11,4 +11,14 @@ blog.email: mail@mail.ru
 blog.copyright: Дмитрий Сергеев
 blog.copyrightFrom: 2005
 
+blog.default.page.limit: 10
+blog.announce.length: 150
+
+mode.recent: recent
+mode.popular: popular
+mode.best: best
+mode.early: early
+
+
+
 
