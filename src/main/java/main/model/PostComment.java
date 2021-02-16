@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class PostComment extends BaseEntity {
 
-    @Column(name = "parent_id", nullable = false)
+    @Column(name = "parent_id")
     private int parentId;
 
     @ManyToOne(fetch = FetchType.LAZY)

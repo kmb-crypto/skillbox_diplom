@@ -5,8 +5,9 @@ import main.dto.PostsResponseDto;
 import main.dto.PostsResponseUserDto;
 import main.model.Post;
 import main.model.User;
+import main.repository.PostCommentRepository;
 import main.repository.PostRepository;
-import main.repository.UserRepository;
+import main.repository.PostVotesRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,12 +41,15 @@ public class PostService {
     private int announceLength;
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final PostVotesRepository postVotesRepository;
+    private final PostCommentRepository postCommentRepository;
+
 
     @Autowired
-    public PostService(final PostRepository postRepository, final UserRepository userRepository) {
+    public PostService(final PostRepository postRepository, final PostVotesRepository postVotesRepository, PostCommentRepository postCommentRepository) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.postVotesRepository = postVotesRepository;
+        this.postCommentRepository = postCommentRepository;
     }
 
     public PostsResponse getPosts(int offset, int limit, final String mode) {
@@ -80,27 +84,30 @@ public class PostService {
 
                 postsCollection.forEach(p -> {
                     //System.out.println(p.getText());
-                    postsResponseDtoList.add(postEntityToResponse(p, userRepository));
+                    postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
                 });
             }
             return new PostsResponse(count, postsResponseDtoList);
         }
     }
 
-    private Collection<Post> timeModePostCollection(PostRepository repository, Pageable pageable) {
+    private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
     }
 
-    private PostsResponseDto postEntityToResponse(final Post post, final UserRepository userRepository) {
+    private PostsResponseDto postEntityToResponse(final Post post,
+                                                  final PostVotesRepository postVotesRepository,
+                                                  final PostCommentRepository postCommentRepository) {
+        int postId = post.getId();
         PostsResponseDto postsResponseDto = new PostsResponseDto();
-        postsResponseDto.setId(post.getId());
+        postsResponseDto.setId(postId);
         postsResponseDto.setTime(post.getTime().toLocalDateTime());
         postsResponseDto.setTitle(post.getTitle());
         postsResponseDto.setAnnounce(createAnnounce(post.getText()));
-        postsResponseDto.setLikeCount(0); //!!!!!!!!!!!!!!!!!!!!!!!
-        postsResponseDto.setDislikeCount(0); //!!!!!!!!!!!!!!!!!!!!
-        postsResponseDto.setCommentCount(0); //!!!!!!!!!!!!!!!!!!!!
-        postsResponseDto.setViewCount(0); //!!!!!!!!!!!!!!!!!!!!!!!
+        postsResponseDto.setLikeCount(postVotesRepository.countLikes(postId));
+        postsResponseDto.setDislikeCount(postVotesRepository.countDislikes(postId));
+        postsResponseDto.setCommentCount(postCommentRepository.countComments(postId));
+        postsResponseDto.setViewCount(post.getViewCount());
         User user = post.getUser();
         postsResponseDto.setUserDto(new PostsResponseUserDto(user.getId(), user.getName()));
 
