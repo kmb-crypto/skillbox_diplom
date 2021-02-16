@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 import java.util.*;
 
 @Service
@@ -46,7 +45,9 @@ public class PostService {
 
 
     @Autowired
-    public PostService(final PostRepository postRepository, final PostVotesRepository postVotesRepository, PostCommentRepository postCommentRepository) {
+    public PostService(final PostRepository postRepository,
+                       final PostVotesRepository postVotesRepository,
+                       final PostCommentRepository postCommentRepository) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
         this.postCommentRepository = postCommentRepository;
@@ -57,36 +58,39 @@ public class PostService {
         if (postRepository.count() == 0) {
             return new PostsResponse(0, new ArrayList<>());
         } else {
+            int count = postRepository.countAllPosts();
+            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+            Collection<Post> postsCollection;
+
             if (limit == 0) {
                 limit = defaultPageLimit;
             }
-            int count = postRepository.countAllPosts();
-            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
 
             if (mode.equals(modeBest)) {
-                System.out.println("MODE BEST");
+                postsCollection = postRepository.findBestPosts(
+                        PageRequest.of((offset / limit),
+                                limit));
             } else if (mode.equals(modePopular)) {
-                System.out.println("MODE POPULAR");
+                postsCollection = postRepository.findPopularPosts(
+                        PageRequest.of((offset / limit),
+                                limit));
             } else {
-                Collection<Post> postsCollection;
                 if (mode.equals(modeRecent) || mode.equals("")) {
                     postsCollection = timeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
                                     Sort.by(Sort.Direction.ASC, "time")));
-
                 } else {
                     postsCollection = timeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
                                     Sort.by(Sort.Direction.DESC, "time")));
                 }
-
-                postsCollection.forEach(p -> {
-                    //System.out.println(p.getText());
-                    postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
-                });
             }
+
+            postsCollection.forEach(p -> {
+                postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+            });
             return new PostsResponse(count, postsResponseDtoList);
         }
     }
@@ -121,7 +125,6 @@ public class PostService {
             return Jsoup.parse(text).text();
         }
     }
-
 }
 
 
