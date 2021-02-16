@@ -16,10 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -42,8 +39,8 @@ public class PostService {
     @Value("${blog.announce.length}")
     private int announceLength;
 
-    private PostRepository postRepository;
-    private UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public PostService(final PostRepository postRepository, final UserRepository userRepository) {
@@ -53,46 +50,45 @@ public class PostService {
 
     public PostsResponse getPosts(int offset, int limit, final String mode) {
 
-        //System.out.println("getPosts: offset " + offset + ", limit " + limit + ", mode " + mode);
         if (postRepository.count() == 0) {
             return new PostsResponse(0, new ArrayList<>());
         } else {
             if (limit == 0) {
                 limit = defaultPageLimit;
             }
-            Pageable pageable = PageRequest.of((offset / limit), limit, createSort(mode));
-            Collection<Post> postsCollection = postRepository.findAllPosts(pageable);
             int count = postRepository.countAllPosts();
-            //System.out.println("count = " + count);
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
 
-            postsCollection.forEach(p -> {
-                //System.out.println(p.getText());
-                postsResponseDtoList.add(postEntityToResponse(p, userRepository));
-            });
+            if (mode.equals(modeBest)) {
+                System.out.println("MODE BEST");
+            } else if (mode.equals(modePopular)) {
+                System.out.println("MODE POPULAR");
+            } else {
+                Collection<Post> postsCollection;
+                if (mode.equals(modeRecent) || mode.equals("")) {
+                    postsCollection = timeModePostCollection(postRepository,
+                            PageRequest.of((offset / limit),
+                                    limit,
+                                    Sort.by(Sort.Direction.ASC, "time")));
 
-//            System.out.println(postRepository.count());
-//            Iterable<Post> postIterable = postRepository.findAll();
-//            postRepository.findAll().forEach(s->{
-//                System.out.println(s.getText());
-//            });
+                } else {
+                    postsCollection = timeModePostCollection(postRepository,
+                            PageRequest.of((offset / limit),
+                                    limit,
+                                    Sort.by(Sort.Direction.DESC, "time")));
+                }
 
-
+                postsCollection.forEach(p -> {
+                    //System.out.println(p.getText());
+                    postsResponseDtoList.add(postEntityToResponse(p, userRepository));
+                });
+            }
             return new PostsResponse(count, postsResponseDtoList);
         }
     }
 
-    private Sort createSort(final String mode) {
-        if (mode.equals(modeRecent)) {
-            return Sort.by(Sort.Direction.ASC, "time");
-        } else if (mode.equals(modeEarly)) {
-            return Sort.by(Sort.Direction.DESC, "time");
-        } else if (mode.equals(modeBest)) {
-            System.out.println("MODE BEST");
-        } else if (mode.equals(modePopular)) {
-            System.out.println("MODE POPULAR");
-        }
-        return Sort.by(Sort.Direction.ASC, "time");
+    private Collection<Post> timeModePostCollection(PostRepository repository, Pageable pageable) {
+        return repository.findAllPosts(pageable);
     }
 
     private PostsResponseDto postEntityToResponse(final Post post, final UserRepository userRepository) {
@@ -105,7 +101,7 @@ public class PostService {
         postsResponseDto.setDislikeCount(0); //!!!!!!!!!!!!!!!!!!!!
         postsResponseDto.setCommentCount(0); //!!!!!!!!!!!!!!!!!!!!
         postsResponseDto.setViewCount(0); //!!!!!!!!!!!!!!!!!!!!!!!
-        User user = userRepository.findById(post.getUser().getId()).get();
+        User user = post.getUser();
         postsResponseDto.setUserDto(new PostsResponseUserDto(user.getId(), user.getName()));
 
         return postsResponseDto;
