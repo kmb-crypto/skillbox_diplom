@@ -2,6 +2,7 @@ package main.service;
 
 import main.api.response.TagsResponse;
 import main.dto.TagResponseDto;
+import main.model.Tag;
 import main.repository.PostRepository;
 import main.repository.Tag2PostRepository;
 import main.repository.TagRepository;
@@ -43,11 +44,24 @@ public class TagService {
     private List<TagResponseDto> tagRepository2tagRespDtoList(final Tag2PostRepository tag2PostRepository,
                                                               final TagRepository tagRepository,
                                                               final int amountOfPosts) {
+        float maxdWeight = 0.00f;
         List<TagResponseDto> tagResponseDtoList = new ArrayList<>();
-        tagRepository.findAll().forEach(tag -> {
-            tagResponseDtoList.add(new TagResponseDto(tag.getName(), (float) 0.5));
 
+        Iterable<Tag> tags = tagRepository.findAll();
+        for (Tag tag : tags) {
+            int amountOfPostsForTag = tag2PostRepository.amountOfPostsForTag(tag.getId());
+
+            float dWeight = (float) amountOfPostsForTag / (float) amountOfPosts;
+            if (maxdWeight < dWeight) {
+                maxdWeight = dWeight;
+            }
+            tagResponseDtoList.add(new TagResponseDto(tag.getName(), dWeight));
+        }
+        float k = 1.00f / maxdWeight;
+        tagResponseDtoList.forEach(t -> {
+            t.setWeight(t.getWeight() * k);
         });
+
         return tagResponseDtoList;
     }
 
