@@ -21,18 +21,6 @@ import java.util.*;
 @Service
 public class PostService {
 
-    @Value("${mode.recent}")
-    private String modeRecent;
-
-    @Value("${mode.best}")
-    private String modeBest;
-
-    @Value("${mode.popular}")
-    private String modePopular;
-
-    @Value("${mode.early}")
-    private String modeEarly;
-
     @Value("${blog.default.page.limit}")
     private int defaultPageLimit;
 
@@ -60,40 +48,43 @@ public class PostService {
         } else {
             int count = postRepository.countAllPosts();
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-            Collection<Post> postsCollection;
+            Collection<Post> postsCollection = new ArrayList<>();
 
             if (limit == 0) {
                 limit = defaultPageLimit;
             }
 
-            if (mode.equals(modeBest)) {
-                postsCollection = postRepository.findBestPosts(
-                        PageRequest.of((offset / limit),
-                                limit));
-            } else if (mode.equals(modePopular)) {
-                postsCollection = postRepository.findPopularPosts(
-                        PageRequest.of((offset / limit),
-                                limit));
-            } else {
-                if (mode.equals(modeRecent) || mode.equals("")) {
+            switch (mode) {
+                case "best":
+                    postsCollection = postRepository.findBestPosts(
+                            PageRequest.of((offset / limit),
+                                    limit));
+                    break;
+                case "popular":
+                    postsCollection = postRepository.findPopularPosts(
+                            PageRequest.of((offset / limit),
+                                    limit));
+                    break;
+                case "recent":
                     postsCollection = timeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
                                     Sort.by(Sort.Direction.ASC, "time")));
-                } else {
+                    break;
+                case "early":
                     postsCollection = timeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
                                     Sort.by(Sort.Direction.DESC, "time")));
-                }
             }
-
             postsCollection.forEach(p -> {
                 postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
             });
             return new PostsResponse(count, postsResponseDtoList);
         }
+
     }
+
 
     private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
