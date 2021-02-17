@@ -1,6 +1,5 @@
 package main.controller;
 
-import lombok.AllArgsConstructor;
 import main.api.response.InitResponse;
 import main.api.response.SettingsResponse;
 import main.service.SettingsService;
@@ -17,18 +16,18 @@ public class ApiGeneralController {
     private final InitResponse initResponse;
 
     @Autowired
-    public ApiGeneralController(SettingsService settingsService, InitResponse initResponse) {
+    public ApiGeneralController(final SettingsService settingsService, final InitResponse initResponse) {
         this.settingsService = settingsService;
         this.initResponse = initResponse;
     }
 
     @GetMapping("/settings")
-    private SettingsResponse settings(){
+    private SettingsResponse settings() {
         return settingsService.getGlobalSettings();
     }
 
     @GetMapping("/init")
-    private InitResponse init(){
+    private InitResponse init() {
         return initResponse;
     }
 }

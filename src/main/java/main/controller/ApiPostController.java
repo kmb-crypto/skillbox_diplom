@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiPostController {
 
-    private PostService postService;
+    private final PostService postService;
 
     @Autowired
-    public ApiPostController(PostService postService) {
+    public ApiPostController(final PostService postService) {
         this.postService = postService;
     }
 
     @GetMapping(value = "/post",
             params = {"offset", "limit", "mode"})
     private ResponseEntity getPosts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit,
-            @RequestParam("mode") String mode) {
+            @RequestParam("offset") final int offset,
+            @RequestParam("limit") final int limit,
+            @RequestParam("mode") final String mode) {
         //System.out.println("offset " + offset + ", limit " + limit + ", mode " + mode);
         PostsResponse postsResponse = postService.getPosts(offset, limit, mode);
 

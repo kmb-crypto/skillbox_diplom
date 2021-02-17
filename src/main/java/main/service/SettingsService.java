@@ -10,8 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class SettingsService {
 
+    private final GlobalSettingsRepository globalSettingsRepository;
+
     @Autowired
-    GlobalSettingsRepository globalSettingsRepository;
+    public SettingsService(final GlobalSettingsRepository globalSettingsRepository) {
+        this.globalSettingsRepository = globalSettingsRepository;
+    }
 
     public SettingsResponse getGlobalSettings() {
         Iterable<GlobalSetting> settingIterable = globalSettingsRepository.findAll();

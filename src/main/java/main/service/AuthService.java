@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    public AuthResponse authResponse(){
+    public AuthResponse authResponse() {
         AuthResponse authResponse = new AuthResponse();
         return authResponse;
     }
