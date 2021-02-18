@@ -29,16 +29,17 @@ public class TagService {
     }
 
     public TagsResponse tagResponse(final String query) {
-        TagsResponse tagsResponse = new TagsResponse(new ArrayList<>());
-        List<TagResponseDto> tagResponseDtoList = new ArrayList<>();
-        int amountOfPosts = postRepository.countAllPosts();
-        if (query == null) {
-            return new TagsResponse(tagRepository2tagRespDtoList(tag2PostRepository, tagRepository, amountOfPosts));
-        } else {
 
-            tagsResponse.setTagsResponse(new ArrayList<>());
-            return tagsResponse;
+        int amountOfPosts = postRepository.countAllPosts();
+        List<TagResponseDto> tagResponseDtoList = tagRepository2tagRespDtoList(
+                tag2PostRepository, tagRepository, amountOfPosts);
+
+        if ((query != null) && (!query.equals(""))) {
+            queryApply(tagResponseDtoList, query);
         }
+        return new TagsResponse(tagResponseDtoList);
+
+
     }
 
     private List<TagResponseDto> tagRepository2tagRespDtoList(final Tag2PostRepository tag2PostRepository,
@@ -63,6 +64,17 @@ public class TagService {
         });
 
         return tagResponseDtoList;
+    }
+
+    private void queryApply(final List<TagResponseDto> tagResponseDtoList, final String query) {
+        String queryLow = query.toLowerCase();
+        for (int i = 0; i < tagResponseDtoList.size(); i++) {
+            System.out.println("query " + queryLow + " -> " + tagResponseDtoList.get(i).getName().toLowerCase() + " -> " + !tagResponseDtoList.get(i).getName().toLowerCase().contains(queryLow));
+            if (!tagResponseDtoList.get(i).getName().toLowerCase().contains(queryLow)) {
+                tagResponseDtoList.remove(i);
+                i--;
+            }
+        }
     }
 
 }
