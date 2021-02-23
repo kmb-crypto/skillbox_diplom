@@ -2,7 +2,7 @@ package main.service;
 
 import main.api.response.TagsResponse;
 import main.dto.TagResponseDto;
-import main.model.Tag;
+import main.dto.TagResponseNative;
 import main.repository.PostRepository;
 import main.repository.Tag2PostRepository;
 import main.repository.TagRepository;
@@ -18,6 +18,7 @@ public class TagService {
     private final TagRepository tagRepository;
     private final PostRepository postRepository;
     private final Tag2PostRepository tag2PostRepository;
+    private static final float WEIGHT_THRESHOLD = 0.3f;
 
     @Autowired
     public TagService(final TagRepository tagRepository,
@@ -30,51 +31,35 @@ public class TagService {
 
     public TagsResponse tagResponse(final String query) {
 
-        int amountOfPosts = postRepository.countAllPosts();
-        List<TagResponseDto> tagResponseDtoList = tagRepository2tagRespDtoList(
-                tag2PostRepository, tagRepository, amountOfPosts);
+        List<TagResponseNative> tagResponseNativeList;
 
-        if ((query != null) && (!query.equals(""))) {
-            queryApply(tagResponseDtoList, query);
+        if (query == null || query.equals("")) {
+            tagResponseNativeList = tagRepository.getTagsWithWeights();
+        } else {
+            tagResponseNativeList = tagRepository.getQueryTagsWithWeights("%" + query.toLowerCase() + "%");
         }
-        return new TagsResponse(tagResponseDtoList);
 
+        return new TagsResponse(tagRepository2tagRespDtoList(tagResponseNativeList));
 
     }
 
-    private List<TagResponseDto> tagRepository2tagRespDtoList(final Tag2PostRepository tag2PostRepository,
-                                                              final TagRepository tagRepository,
-                                                              final int amountOfPosts) {
-        float maxdWeight = 0.00f;
+    private List<TagResponseDto> tagRepository2tagRespDtoList(final List<TagResponseNative> tagResponseNativeList) {
         List<TagResponseDto> tagResponseDtoList = new ArrayList<>();
+        float maxNotNormedWeight = 0.00f;
 
-        Iterable<Tag> tags = tagRepository.findAll();
-        for (Tag tag : tags) {
-            int amountOfPostsForTag = tag2PostRepository.amountOfPostsForTag(tag.getId());
-
-            float dWeight = (float) amountOfPostsForTag / (float) amountOfPosts;
-            if (maxdWeight < dWeight) {
-                maxdWeight = dWeight;
-            }
-            tagResponseDtoList.add(new TagResponseDto(tag.getName(), dWeight));
+        for (TagResponseNative tagResponse : tagResponseNativeList) {
+            float notNormedWeight = tagResponse.getWeight();
+            tagResponseDtoList.add(new TagResponseDto(tagResponse.getName(), notNormedWeight));
+            maxNotNormedWeight = maxNotNormedWeight < notNormedWeight ? notNormedWeight : maxNotNormedWeight;
         }
-        float k = 1.00f / maxdWeight;
+
+        float k = 1.00f / maxNotNormedWeight;
         tagResponseDtoList.forEach(t -> {
-            t.setWeight(t.getWeight() * k);
+            float normedWeight = t.getWeight() * k;
+            t.setWeight(normedWeight < WEIGHT_THRESHOLD ? WEIGHT_THRESHOLD : normedWeight);
         });
 
         return tagResponseDtoList;
-    }
-
-    private void queryApply(final List<TagResponseDto> tagResponseDtoList, final String query) {
-        String queryLow = query.toLowerCase();
-        for (int i = 0; i < tagResponseDtoList.size(); i++) {
-            System.out.println("query " + queryLow + " -> " + tagResponseDtoList.get(i).getName().toLowerCase() + " -> " + !tagResponseDtoList.get(i).getName().toLowerCase().contains(queryLow));
-            if (!tagResponseDtoList.get(i).getName().toLowerCase().contains(queryLow)) {
-                tagResponseDtoList.remove(i);
-                i--;
-            }
-        }
     }
 
 }

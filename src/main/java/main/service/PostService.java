@@ -42,11 +42,11 @@ public class PostService {
     }
 
     public PostsResponse getPosts(int offset, int limit, final String mode) {
-
-        if (postRepository.count() == 0) {
-            return new PostsResponse(0, new ArrayList<>());
+        int count = postRepository.countAllAvailablePosts();
+        if (count == 0) {
+            return new PostsResponse(count, new ArrayList<>());
         } else {
-            int count = postRepository.countAllPosts();
+
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
             Collection<Post> postsCollection = new ArrayList<>();
 
@@ -84,7 +84,6 @@ public class PostService {
         }
 
     }
-
 
     private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);

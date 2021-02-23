@@ -32,6 +32,6 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
     @Query(value = "SELECT count(*) FROM posts " +
             "WHERE is_active = 1 AND time < now() AND moderation_status = 'ACCEPTED'",
             nativeQuery = true)
-    Integer countAllPosts();
+    Integer countAllAvailablePosts();
 
 }

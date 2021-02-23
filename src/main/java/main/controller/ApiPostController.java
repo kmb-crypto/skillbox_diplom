@@ -1,6 +1,5 @@
 package main.controller;
 
-import main.api.response.PostsResponse;
 import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,13 +27,8 @@ public class ApiPostController {
             @RequestParam("offset") final int offset,
             @RequestParam("limit") final int limit,
             @RequestParam("mode") final String mode) {
-        //System.out.println("offset " + offset + ", limit " + limit + ", mode " + mode);
-        PostsResponse postsResponse = postService.getPosts(offset, limit, mode);
 
-        if (postsResponse.getCount() == 0) {
-            return new ResponseEntity(postsResponse, HttpStatus.OK);
-        } else {
-            return new ResponseEntity(postsResponse, HttpStatus.OK);
-        }
+        return new ResponseEntity(postService.getPosts(offset, limit, mode), HttpStatus.OK);
+
     }
 }
