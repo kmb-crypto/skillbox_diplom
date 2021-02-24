@@ -1,5 +1,8 @@
 package main.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +12,10 @@ import javax.persistence.*;
 @Table(name = "global_settings")
 @Component
 @Scope("prototype")
-public class GlobalSetting {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+@Getter
+@Setter
+@NoArgsConstructor
+public class GlobalSetting extends BaseEntity {
 
     @Column(nullable = false)
     private String code;
@@ -24,38 +26,4 @@ public class GlobalSetting {
     @Column(nullable = false)
     private String value;
 
-    public GlobalSetting() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 }

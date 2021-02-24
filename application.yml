@@ -2,4 +2,23 @@ spring.datasource.url: jdbc:mysql://localhost:3306/forrum?useUnicode=true&charac
 spring.datasource.username: root
 spring.datasource.password: 2002
 spring.jpa.hibernate.ddl-auto: update
-spring.jpa.show-sql: true
+spring.jpa.show-sql: false
+
+blog.title: DevPub
+blog.subtitle: Рассказы разработчиков
+blog.phone: +7 903 666-44-55
+blog.email: mail@mail.ru
+blog.copyright: Дмитрий Сергеев
+blog.copyrightFrom: 2005
+
+blog.default.page.limit: 10
+blog.announce.length: 150
+
+mode.recent: recent
+mode.popular: popular
+mode.best: best
+mode.early: early
+
+
+
+
