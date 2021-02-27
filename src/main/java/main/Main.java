@@ -8,9 +8,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class Main {
     public static void main(String[] args) {
 
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
-        SpringApplication.run(Main.class, args);
-
+       SpringApplication.run(Main.class, args);
 
     }
 }

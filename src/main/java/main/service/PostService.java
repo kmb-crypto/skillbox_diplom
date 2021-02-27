@@ -41,7 +41,7 @@ public class PostService {
         this.postCommentRepository = postCommentRepository;
     }
 
-    public PostsResponse getPosts(int offset, int limit, final String mode) {
+    public PostsResponse getPostsResponse(int offset, int limit, final String mode) {
         int count = postRepository.countAllAvailablePosts();
         if (count == 0) {
             return new PostsResponse(count, new ArrayList<>());

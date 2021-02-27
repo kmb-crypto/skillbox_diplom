@@ -28,7 +28,7 @@ public class ApiPostController {
             @RequestParam("limit") final int limit,
             @RequestParam("mode") final String mode) {
 
-        return new ResponseEntity(postService.getPosts(offset, limit, mode), HttpStatus.OK);
+        return new ResponseEntity(postService.getPostsResponse(offset, limit, mode), HttpStatus.OK);
 
     }
 }
