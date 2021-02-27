@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "global_settings")
 @Component
-@Scope("prototype")
 @Getter
 @Setter
 @NoArgsConstructor
