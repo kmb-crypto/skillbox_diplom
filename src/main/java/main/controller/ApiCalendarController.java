@@ -15,7 +15,7 @@ public class ApiCalendarController {
     private final CalendarService calendarService;
 
     @Autowired
-    public ApiCalendarController(CalendarService calendarService) {
+    public ApiCalendarController(final CalendarService calendarService) {
         this.calendarService = calendarService;
     }
 

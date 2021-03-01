@@ -2,7 +2,7 @@ package main.service;
 
 import main.api.response.TagsResponse;
 import main.dto.TagResponseDto;
-import main.dto.TagResponseNative;
+import main.dto.TagNative;
 import main.repository.PostRepository;
 import main.repository.Tag2PostRepository;
 import main.repository.TagRepository;
@@ -31,23 +31,23 @@ public class TagService {
 
     public TagsResponse tagResponse(final String query) {
 
-        List<TagResponseNative> tagResponseNativeList;
+        List<TagNative> tagNativeList;
 
         if (query == null || query.equals("")) {
-            tagResponseNativeList = tagRepository.getTagsWithWeights();
+            tagNativeList = tagRepository.getTagsWithWeights();
         } else {
-            tagResponseNativeList = tagRepository.getQueryTagsWithWeights("%" + query.toLowerCase() + "%");
+            tagNativeList = tagRepository.getQueryTagsWithWeights("%" + query.toLowerCase() + "%");
         }
 
-        return new TagsResponse(tagRepository2tagRespDtoList(tagResponseNativeList));
+        return new TagsResponse(tagRepository2tagRespDtoList(tagNativeList));
 
     }
 
-    private List<TagResponseDto> tagRepository2tagRespDtoList(final List<TagResponseNative> tagResponseNativeList) {
+    private List<TagResponseDto> tagRepository2tagRespDtoList(final List<TagNative> tagNativeList) {
         List<TagResponseDto> tagResponseDtoList = new ArrayList<>();
         float maxNotNormedWeight = 0.00f;
 
-        for (TagResponseNative tagResponse : tagResponseNativeList) {
+        for (TagNative tagResponse : tagNativeList) {
             float notNormedWeight = tagResponse.getWeight();
             tagResponseDtoList.add(new TagResponseDto(tagResponse.getName(), notNormedWeight));
             maxNotNormedWeight = maxNotNormedWeight < notNormedWeight ? notNormedWeight : maxNotNormedWeight;
