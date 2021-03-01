@@ -89,11 +89,30 @@ public class PostService {
 
             limit = limitCheck(limit);
 
-            postsCollection = postRepository.findAllPostsByDate(date,PageRequest.of((offset / limit), limit));
+            postsCollection = postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit));
 
             postsCollection.forEach(p -> {
                 postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
             });
+            return new PostsResponse(count, postsResponseDtoList);
+        }
+    }
+
+    public PostsResponse getPostsByQueryResponse(final int offset, int limit, final String query) {
+        int count = postRepository.countAllAvailablePostsByQuery(query);
+        if (count == 0) {
+            return new PostsResponse(count, new ArrayList<>());
+        } else {
+            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+            Collection<Post> postsCollection;
+
+            limit = limitCheck(limit);
+
+            postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
+            postsCollection.forEach(p -> {
+                postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+            });
+
             return new PostsResponse(count, postsResponseDtoList);
         }
     }
