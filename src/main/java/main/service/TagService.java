@@ -36,7 +36,8 @@ public class TagService {
         if (query == null || query.equals("")) {
             tagNativeList = tagRepository.getTagsWithWeights();
         } else {
-            tagNativeList = tagRepository.getQueryTagsWithWeights("%" + query.toLowerCase() + "%");
+
+            tagNativeList = tagRepository.getQueryTagsWithWeights(query.toLowerCase());
         }
 
         return new TagsResponse(tagRepository2tagRespDtoList(tagNativeList));
