@@ -41,7 +41,7 @@ public class PostService {
         this.postCommentRepository = postCommentRepository;
     }
 
-    public PostsResponse getPostsResponse(int offset, int limit, final String mode) {
+    public PostsResponse getPostsResponse(final int offset, int limit, final String mode) {
         int count = postRepository.countAllAvailablePosts();
         if (count == 0) {
             return new PostsResponse(count, new ArrayList<>());
@@ -50,20 +50,14 @@ public class PostService {
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
             Collection<Post> postsCollection = new ArrayList<>();
 
-            if (limit == 0) {
-                limit = defaultPageLimit;
-            }
+            limit = limitCheck(limit);
 
             switch (mode) {
                 case "best":
-                    postsCollection = postRepository.findBestPosts(
-                            PageRequest.of((offset / limit),
-                                    limit));
+                    postsCollection = postRepository.findBestPosts(PageRequest.of((offset / limit), limit));
                     break;
                 case "popular":
-                    postsCollection = postRepository.findPopularPosts(
-                            PageRequest.of((offset / limit),
-                                    limit));
+                    postsCollection = postRepository.findPopularPosts(PageRequest.of((offset / limit), limit));
                     break;
                 case "recent":
                     postsCollection = timeModePostCollection(postRepository,
@@ -83,6 +77,25 @@ public class PostService {
             return new PostsResponse(count, postsResponseDtoList);
         }
 
+    }
+
+    public PostsResponse getPostsByDateResponse(final int offset, int limit, final String date) {
+        int count = postRepository.countAllAvailablePostsByDate(date);
+        if (count == 0) {
+            return new PostsResponse(count, new ArrayList<>());
+        } else {
+            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+            Collection<Post> postsCollection;
+
+            limit = limitCheck(limit);
+
+            postsCollection = postRepository.findAllPostsByDate(date,PageRequest.of((offset / limit), limit));
+
+            postsCollection.forEach(p -> {
+                postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+            });
+            return new PostsResponse(count, postsResponseDtoList);
+        }
     }
 
     private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
@@ -114,6 +127,10 @@ public class PostService {
         } else {
             return Jsoup.parse(text).text();
         }
+    }
+
+    private int limitCheck(int limit) {
+        return limit == 0 ? defaultPageLimit : limit;
     }
 }
 

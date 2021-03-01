@@ -46,8 +46,21 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
             "FROM posts " +
             "WHERE is_active = 1 AND time<now() AND moderation_status='ACCEPTED' " +
             "AND EXTRACT(YEAR FROM posts.time) = :year " +
-            "GROUP BY CAST(posts.time AS date)"
-            ,nativeQuery = true)
+            "GROUP BY CAST(posts.time AS date)",
+            nativeQuery = true)
     List<AmountOfPostsByDay> getAmountOfPostsByDay(@Param("year") int year);
+
+    @Query(value = "SELECT * FROM posts " +
+            "WHERE is_active = 1 AND time < now() AND moderation_status = 'ACCEPTED' " +
+            "AND CAST(posts.time AS date) = :date",
+            nativeQuery = true)
+    List<Post> findAllPostsByDate(@Param("date") String date, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "WHERE is_active = 1 AND time < now() AND moderation_status = 'ACCEPTED' " +
+            "AND CAST(posts.time AS date) = :date",
+            nativeQuery = true)
+    Integer countAllAvailablePostsByDate(@Param("date") String date);
+
 
 }
