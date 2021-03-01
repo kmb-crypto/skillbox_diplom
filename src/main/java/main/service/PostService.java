@@ -69,13 +69,13 @@ public class PostService {
                     postsCollection = timeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
-                                    Sort.by(Sort.Direction.ASC, "time")));
+                                    Sort.by(Sort.Direction.DESC, "time")));
                     break;
                 case "early":
                     postsCollection = timeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
-                                    Sort.by(Sort.Direction.DESC, "time")));
+                                    Sort.by(Sort.Direction.ASC, "time")));
             }
             postsCollection.forEach(p -> {
                 postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 
@@ -13,6 +12,6 @@ import java.util.TreeSet;
 public class CalendarResponse {
     private TreeSet<Integer> years;
 
-    private HashMap<String,Integer> posts;
+    private HashMap<String, Integer> posts;
 
 }
