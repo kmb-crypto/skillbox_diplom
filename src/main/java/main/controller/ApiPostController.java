@@ -29,6 +29,12 @@ public class ApiPostController {
             @RequestParam("mode") final String mode) {
 
         return new ResponseEntity(postService.getPostsResponse(offset, limit, mode), HttpStatus.OK);
+    }
 
+    @GetMapping(value = "/post/byDate")
+    private ResponseEntity getPostsByDate(@RequestParam("offset") final int offset,
+                                          @RequestParam("limit") final int limit,
+                                          @RequestParam("date") final String date) {
+        return new ResponseEntity(postService.getPostsByDateResponse(offset, limit, date), HttpStatus.OK);
     }
 }
