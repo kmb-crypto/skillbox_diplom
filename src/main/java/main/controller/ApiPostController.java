@@ -48,6 +48,12 @@ public class ApiPostController {
         } else {
             return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
         }
+    }
 
+    @GetMapping(value = "/post/byTag")
+    private ResponseEntity getPostsByTag(@RequestParam("offset") final int offset,
+                                         @RequestParam("limit") final int limit,
+                                         @RequestParam("tag") final String tag) {
+        return new ResponseEntity(postService.getPostsByTagResponse(offset, limit, tag), HttpStatus.OK);
     }
 }
