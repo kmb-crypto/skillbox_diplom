@@ -44,7 +44,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
     @Query(value = "SELECT DATE_FORMAT(posts.time, '%Y-%m-%d') AS date," +
             "COUNT(*) AS amount " +
             "FROM posts " +
-            "WHERE is_active = 1 AND time<now() AND moderation_status='ACCEPTED' " +
+            "WHERE is_active = 1 AND time < now() AND moderation_status='ACCEPTED' " +
             "AND EXTRACT(YEAR FROM posts.time) = :year " +
             "GROUP BY CAST(posts.time AS date)",
             nativeQuery = true)
@@ -63,14 +63,27 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
     Integer countAllAvailablePostsByDate(@Param("date") String date);
 
     @Query(value = "SELECT * FROM posts " +
-            "WHERE is_active = 1 AND time<now() AND moderation_status='ACCEPTED' " +
+            "WHERE is_active = 1 AND time < now() AND moderation_status = 'ACCEPTED' " +
             "AND (posts.text LIKE %:query% OR posts.title LIKE %:query%)", nativeQuery = true)
     List<Post> findAllPostsByQuery(@Param("query") String query, Pageable pageable);
 
 
     @Query(value = "SELECT count(*) FROM posts " +
-            "WHERE is_active = 1 AND time<now() AND moderation_status='ACCEPTED' " +
+            "WHERE is_active = 1 AND time < now() AND moderation_status='ACCEPTED' " +
             "AND (posts.text LIKE %:query% OR posts.title LIKE %:query%)", nativeQuery = true)
     Integer countAllAvailablePostsByQuery(@Param("query") String query);
 
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN tag2post ON tag2post.post_id = posts.id " +
+            "JOIN tags ON tags.id = tag2post.tag_id " +
+            "WHERE  is_active = 1 AND time < now() AND moderation_status='ACCEPTED' AND " +
+            "tags.name LIKE :tag", nativeQuery = true)
+    List<Post> findAllPostsByTag(@Param("tag") String tag, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN tag2post ON tag2post.post_id = posts.id " +
+            "JOIN tags ON tags.id = tag2post.tag_id " +
+            "WHERE  is_active = 1 AND time < now() AND moderation_status='ACCEPTED' AND " +
+            "tags.name LIKE :tag", nativeQuery = true)
+    Integer countAllAvailablePostsByTag(@Param("tag") String tag);
 }

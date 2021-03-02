@@ -117,6 +117,20 @@ public class PostService {
         }
     }
 
+    public PostsResponse getPostsByTagResponse(final int offset, int limit, final String tag) {
+        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+        Collection<Post> postsCollection;
+
+        limit = limitCheck(limit);
+
+        postsCollection = postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit));
+        postsCollection.forEach(p -> {
+            postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+        });
+        return new PostsResponse(postRepository.countAllAvailablePostsByTag(tag), postsResponseDtoList);
+
+    }
+
     private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
     }
