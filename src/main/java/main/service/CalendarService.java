@@ -24,9 +24,7 @@ public class CalendarService {
         TreeSet<Integer> years = new TreeSet<>();
         HashMap<String, Integer> posts = new HashMap<>();
 
-        if (year == null || year.equals("")) {
-            year = getCurrentYear();
-        }
+        year = (year == null) ? getCurrentYear() : year;
 
         postRepository.getCalendarYears().forEach(y -> {
             years.add(y.getYear());

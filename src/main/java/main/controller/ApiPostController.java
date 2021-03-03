@@ -41,13 +41,9 @@ public class ApiPostController {
     @GetMapping(value = "/post/search")
     private ResponseEntity getPostsBySearch(@RequestParam("offset") final int offset,
                                             @RequestParam("limit") final int limit,
-                                            @RequestParam("query") String query) {
-        query = query.trim().replaceAll("\\s+", " ");
-        if (query.equals("")) {
-            return new ResponseEntity(postService.getPostsResponse(offset, limit, "recent"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
-        }
+                                            @RequestParam("query") final String query) {
+        return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
+
     }
 
     @GetMapping(value = "/post/byTag")

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Set;
+import java.util.List;
 
 
 @Entity
@@ -37,13 +37,13 @@ public class User extends BaseEntity {
     private String photo;  //link to photo
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Post> posts;
+    private List<Post> posts;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<PostComment> postComments;
+    private List<PostComment> postComments;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<PostVote> postVotes;
+    private List<PostVote> postVotes;
 
 
 }
