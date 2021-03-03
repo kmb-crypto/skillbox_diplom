@@ -98,22 +98,27 @@ public class PostService {
         }
     }
 
-    public PostsResponse getPostsByQueryResponse(final int offset, int limit, final String query) {
-        int count = postRepository.countAllAvailablePostsByQuery(query);
-        if (count == 0) {
-            return new PostsResponse(count, new ArrayList<>());
+    public PostsResponse getPostsByQueryResponse(final int offset, int limit, String query) {
+        query = query.trim().replaceAll("\\s+", " ");
+        if (query.equals("")) {
+            return getPostsResponse(offset, limit, "recent");
         } else {
-            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-            Collection<Post> postsCollection;
+            int count = postRepository.countAllAvailablePostsByQuery(query);
+            if (count == 0) {
+                return new PostsResponse(count, new ArrayList<>());
+            } else {
+                List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+                Collection<Post> postsCollection;
 
-            limit = limitCheck(limit);
+                limit = limitCheck(limit);
 
-            postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
-            postsCollection.forEach(p -> {
-                postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
-            });
+                postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
+                postsCollection.forEach(p -> {
+                    postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+                });
 
-            return new PostsResponse(count, postsResponseDtoList);
+                return new PostsResponse(count, postsResponseDtoList);
+            }
         }
     }
 

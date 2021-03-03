@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
+
 
 @Entity
 @Table(name = "tags")
@@ -21,6 +22,6 @@ public class Tag extends BaseEntity {
     @JoinTable(name = "tag2post",
             joinColumns = {@JoinColumn(name = "tag_id")},
             inverseJoinColumns = {@JoinColumn(name = "post_id")})
-    private Set<Post> posts;
+    private List<Post> posts;
 
 }
