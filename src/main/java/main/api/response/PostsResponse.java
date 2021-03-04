@@ -2,27 +2,23 @@ package main.api.response;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import main.dto.PostsResponseDto;
 
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class PostsResponse {
 
-    @Getter
-    @Setter
     private int count;
 
-    @Getter
-    @Setter
     @JsonProperty("posts")
     private List<PostsResponseDto> postResponseDtos;
 
-    public PostsResponse(int count, List<PostsResponseDto> postResponse) {
-        this.count = count;
-        this.postResponseDtos = postResponse;
-    }
 }
 
 //{
