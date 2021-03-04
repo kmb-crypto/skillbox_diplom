@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class PostComment extends BaseEntity {
 
     @Column(name = "parent_id")
-    private int parentId;
+    private Integer parentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
