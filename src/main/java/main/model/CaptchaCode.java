@@ -1,5 +1,6 @@
 package main.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,16 +13,17 @@ import java.sql.Timestamp;
 @Setter
 @Table(name = "captcha_codes")
 @NoArgsConstructor
+@AllArgsConstructor
 public class CaptchaCode extends BaseEntity {
 
     @Column(nullable = false)
     private Timestamp time;
 
-    @Column(nullable = false)
-    private short code;
+    @Column(nullable = false, columnDefinition = "TINYTEXT")
+    private String code;
 
-    @Column(name = "secret_code", nullable = false)
-    private short secretCode;
+    @Column(name = "secret_code", nullable = false, columnDefinition = "TINYTEXT")
+    private String secretCode;
 
 }
 

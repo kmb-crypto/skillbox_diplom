@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Service
@@ -146,7 +147,7 @@ public class PostService {
         int postId = post.getId();
         PostsResponseDto postsResponseDto = new PostsResponseDto();
         postsResponseDto.setId(postId);
-        postsResponseDto.setTime(post.getTime().toLocalDateTime());
+        postsResponseDto.setTimestamp(post.getTime().toLocalDateTime().toEpochSecond(ZoneOffset.of("+03:00")));
         postsResponseDto.setTitle(post.getTitle());
         postsResponseDto.setAnnounce(createAnnounce(post.getText()));
         postsResponseDto.setLikeCount(postVotesRepository.countLikes(postId));
