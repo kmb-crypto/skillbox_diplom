@@ -1,10 +1,12 @@
 package main.service;
 
+import main.api.response.PostByIdResponse;
 import main.api.response.PostsResponse;
+import main.dto.CommentsResponseDto;
+import main.dto.CommentsResponseUserDto;
 import main.dto.PostsResponseDto;
 import main.dto.PostsResponseUserDto;
-import main.model.Post;
-import main.model.User;
+import main.model.*;
 import main.repository.PostCommentRepository;
 import main.repository.PostRepository;
 import main.repository.PostVotesRepository;
@@ -137,9 +139,16 @@ public class PostService {
 
     }
 
+    public PostByIdResponse getPostById(final int id) {
+
+        Post post = postRepository.findPostById(id);
+        return postEntityToResponseById(post, id);
+    }
+
     private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
     }
+
 
     private PostsResponseDto postEntityToResponse(final Post post,
                                                   final PostVotesRepository postVotesRepository,
@@ -158,6 +167,56 @@ public class PostService {
         postsResponseDto.setUserDto(new PostsResponseUserDto(user.getId(), user.getName()));
 
         return postsResponseDto;
+    }
+
+    private PostByIdResponse postEntityToResponseById(final Post post, final int id) {
+        PostByIdResponse postByIdResponse = new PostByIdResponse();
+
+        postByIdResponse.setId(id);
+        postByIdResponse.setTimestamp(post.getTime().toLocalDateTime().toEpochSecond(ZoneOffset.of("+03:00")));
+        postByIdResponse.setActive((post.getIsActive() == 0) ? false : true);
+
+        User user = post.getUser();
+
+        postByIdResponse.setUserDto(new PostsResponseUserDto(user.getId(), user.getName()));
+        postByIdResponse.setTitle(post.getTitle());
+        postByIdResponse.setText(post.getText());
+
+        int likes = 0;
+        int dislikes = 0;
+        for (PostVote vote : post.getPostVotes()) {
+            if ((vote.getValue() == 1)) {
+                likes++;
+            } else {
+                dislikes++;
+            }
+        }
+
+        postByIdResponse.setLikeCount(likes);
+        postByIdResponse.setDislikeCount(dislikes);
+
+        List<CommentsResponseDto> commentsResponseDtoList = new ArrayList<>();
+
+        for (PostComment comment : post.getPostComments()) {
+            User commentUser = comment.getUser();
+            commentsResponseDtoList.add(new CommentsResponseDto(comment.getId(),
+                    comment.getTime().toLocalDateTime().toEpochSecond(ZoneOffset.of("+03:00")),
+                    comment.getText(),
+                    new CommentsResponseUserDto(commentUser.getId(), commentUser.getName(), commentUser.getPhoto())));
+        }
+
+        postByIdResponse.setComments(commentsResponseDtoList);
+
+        List<String> tagResponse = new ArrayList<>();
+
+        for (Tag tag : post.getTags()) {
+            tagResponse.add(tag.getName());
+        }
+
+        postByIdResponse.setTags(tagResponse);
+
+        return postByIdResponse;
+
     }
 
     private String createAnnounce(final String text) {

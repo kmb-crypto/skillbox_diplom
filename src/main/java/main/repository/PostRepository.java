@@ -86,4 +86,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
             "WHERE  is_active = 1 AND time < now() AND moderation_status='ACCEPTED' AND " +
             "tags.name LIKE :tag", nativeQuery = true)
     Integer countAllAvailablePostsByTag(@Param("tag") String tag);
+
+    @Query(value = "SELECT * FROM posts WHERE posts.id = :id", nativeQuery = true)
+    Post findPostById(@Param("id") int id);
 }
