@@ -4,10 +4,7 @@ import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -51,5 +48,12 @@ public class ApiPostController {
                                          @RequestParam("limit") final int limit,
                                          @RequestParam("tag") final String tag) {
         return new ResponseEntity(postService.getPostsByTagResponse(offset, limit, tag), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/post/{id}")
+    private ResponseEntity getPostById(@PathVariable int id) {
+
+        return new ResponseEntity(postService.getPostById(id), HttpStatus.OK);
+
     }
 }

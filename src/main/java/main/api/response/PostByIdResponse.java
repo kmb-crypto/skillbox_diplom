@@ -23,12 +23,13 @@ public class PostByIdResponse {
     private PostsResponseUserDto userDto;
 
     private String title;
-    private String announce;
+    private String text;
     private int likeCount;
     private int dislikeCount;
-    private int commentCount;
     private int viewCount;
 
     private List<CommentsResponseDto> comments;
+
+    private List<String> tags;
 
 }

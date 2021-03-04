@@ -39,7 +39,7 @@ public class CaptchaService {
 
         captchaRepository.save(new CaptchaCode(new Timestamp(System.currentTimeMillis()), code, secretCode));
 
-        removeOldCaptcha();
+        // removeOldCaptcha();
 
         return new CaptchaResponse(secretCode,
                 BASE64_DATA_FIRST_STRING + Base64.getEncoder().encodeToString(getByteData(image)));
