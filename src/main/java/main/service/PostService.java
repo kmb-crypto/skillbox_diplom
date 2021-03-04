@@ -142,7 +142,12 @@ public class PostService {
     public PostByIdResponse getPostById(final int id) {
 
         Post post = postRepository.findPostById(id);
-        return postEntityToResponseById(post, id);
+
+        if (post == null) {
+            return null;
+        } else {
+            return postEntityToResponseById(post, id);
+        }
     }
 
     private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
