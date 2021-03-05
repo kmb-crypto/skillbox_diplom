@@ -40,7 +40,7 @@ public class InitSettings {
             GlobalSetting multiuser = new GlobalSetting();
             multiuser.setCode(MULTI_USER_CODE);
             multiuser.setName(MULTI_USER_NAME);
-            multiuser.setValue(NO);
+            multiuser.setValue(YES);
 
             GlobalSetting postPremoderation = new GlobalSetting();
             postPremoderation.setCode(POST_PREMODERATION_CODE);

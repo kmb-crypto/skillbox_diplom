@@ -8,6 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -39,8 +40,6 @@ public class CaptchaService {
 
         captchaRepository.save(new CaptchaCode(new Timestamp(System.currentTimeMillis()), code, secretCode));
 
-        // removeOldCaptcha();
-
         return new CaptchaResponse(secretCode,
                 BASE64_DATA_FIRST_STRING + Base64.getEncoder().encodeToString(getByteData(image)));
     }
@@ -58,7 +57,8 @@ public class CaptchaService {
 
     }
 
-    private void removeOldCaptcha() {
+    @Scheduled(fixedDelay = 600000)
+    public void removeOldCaptcha() {
         captchaRepository.removeOldCaptcha(captchaLifetimeMinutes);
     }
 }

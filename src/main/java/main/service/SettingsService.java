@@ -24,15 +24,13 @@ public class SettingsService {
             String code = setting.getCode();
             if (code.equals(InitSettings.getMULTI_USER_CODE())) {
                 settingsResponse.setMultiuserMode(valueToBoolean(setting));
-                //System.out.println(code + " " + setting.getValue());
                 continue;
             } else if (code.equals(InitSettings.getPOST_PREMODERATION_CODE())) {
                 settingsResponse.setPostPremoderation(valueToBoolean(setting));
-                //System.out.println(code + " " + setting.getValue());
                 continue;
             } else {
                 settingsResponse.setStatisticIsPublic(valueToBoolean(setting));
-                //System.out.println(code + " " + setting.getValue());
+
             }
         }
         return settingsResponse;
