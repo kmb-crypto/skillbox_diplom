@@ -146,6 +146,8 @@ public class PostService {
         if (post == null) {
             return null;
         } else {
+            post.setViewCount(post.getViewCount() + 1);
+            postRepository.save(post);
             return postEntityToResponseById(post, id);
         }
     }
