@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @ToString
 public class BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
