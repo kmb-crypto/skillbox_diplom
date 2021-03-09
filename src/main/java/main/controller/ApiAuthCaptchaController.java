@@ -13,7 +13,7 @@ public class ApiAuthCaptchaController {
     private final CaptchaService captchaService;
 
     @Autowired
-    public ApiAuthCaptchaController(CaptchaService captchaService) {
+    public ApiAuthCaptchaController(final CaptchaService captchaService) {
         this.captchaService = captchaService;
     }
 
