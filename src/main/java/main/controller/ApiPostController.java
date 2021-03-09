@@ -54,7 +54,7 @@ public class ApiPostController {
     }
 
     @GetMapping(value = "/post/{id}")
-    private ResponseEntity getPostById(@PathVariable int id) {
+    private ResponseEntity getPostById(@PathVariable final int id) {
 
         Optional<PostByIdResponse> optionalPostByIdResponse = Optional.ofNullable(postService.getPostById(id));
         if (optionalPostByIdResponse.isEmpty()) {

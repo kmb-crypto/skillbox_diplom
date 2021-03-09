@@ -13,7 +13,9 @@ blog.copyrightFrom: 2005
 
 blog.default.page.limit: 10
 blog.announce.length: 150
-blog.captcha.lifetime.minutes: 60
+blog.captcha.lifetime.minutes: 5
+blog.captcha.width: 100
+blog.captcha.height: 35
 
 mode.recent: recent
 mode.popular: popular

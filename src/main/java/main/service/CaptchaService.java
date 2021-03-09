@@ -21,20 +21,27 @@ import java.util.Base64;
 @Service
 public class CaptchaService {
     private final static String BASE64_DATA_FIRST_STRING = "data:image/png;base64, ";
+    private final static int OLD_CAPTCHA_CHECH_SHEDULE = 600000;
     private final CaptchaRepository captchaRepository;
 
     @Value("${blog.captcha.lifetime.minutes}")
     private int captchaLifetimeMinutes;
 
+    @Value("${blog.captcha.width}")
+    private int captchaWidth;
+
+    @Value("${blog.captcha.height}")
+    private int captchaHeight;
+
     @Autowired
-    public CaptchaService(CaptchaRepository captchaRepository) {
+    public CaptchaService(final CaptchaRepository captchaRepository) {
         this.captchaRepository = captchaRepository;
     }
 
     public CaptchaResponse captchaGenerator() {
         Cage cage = new Cage(null, null, null, "png", null, null, null);
         String code = cage.getTokenGenerator().next();
-        BufferedImage image = Scalr.resize(cage.drawImage(code), 100, 35);
+        BufferedImage image = Scalr.resize(cage.drawImage(code), captchaWidth, captchaHeight);
 
         String secretCode = DigestUtils.sha256Hex(code);
 
@@ -44,7 +51,7 @@ public class CaptchaService {
                 BASE64_DATA_FIRST_STRING + Base64.getEncoder().encodeToString(getByteData(image)));
     }
 
-    private byte[] getByteData(BufferedImage bufferedImage) {
+    private byte[] getByteData(final BufferedImage bufferedImage) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -57,7 +64,7 @@ public class CaptchaService {
 
     }
 
-    @Scheduled(fixedDelay = 600000)
+    @Scheduled(fixedDelay = OLD_CAPTCHA_CHECH_SHEDULE)
     public void removeOldCaptcha() {
         captchaRepository.removeOldCaptcha(captchaLifetimeMinutes);
     }
