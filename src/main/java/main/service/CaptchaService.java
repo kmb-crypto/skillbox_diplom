@@ -17,11 +17,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.GregorianCalendar;
 
 @Service
 public class CaptchaService {
     private final static String BASE64_DATA_FIRST_STRING = "data:image/png;base64, ";
-    private final static int OLD_CAPTCHA_CHECH_SHEDULE = 600000;
+    private final static int OLD_CAPTCHA_CHECH_SHEDULE = 120000;
     private final CaptchaRepository captchaRepository;
 
     @Value("${blog.captcha.lifetime.minutes}")
@@ -66,6 +67,10 @@ public class CaptchaService {
 
     @Scheduled(fixedDelay = OLD_CAPTCHA_CHECH_SHEDULE)
     public void removeOldCaptcha() {
-        captchaRepository.removeOldCaptcha(captchaLifetimeMinutes);
+
+        if (captchaRepository.removeOldCaptcha(captchaLifetimeMinutes) > 0) {
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            System.out.println("Old captcha removed : " + gregorianCalendar.getTime());
+        }
     }
 }

@@ -19,7 +19,7 @@ public interface CaptchaRepository extends CrudRepository<CaptchaCode, Integer> 
             "WHERE captcha_codes.id > 0 " +
             "AND (unix_timestamp(now())-unix_timestamp(captcha_codes.time)) / 60 > :limit",
             nativeQuery = true)
-    void removeOldCaptcha(@Param("limit") int limitInMinutes);
+    int removeOldCaptcha(@Param("limit") int limitInMinutes);
 
     @Query(value = "SELECT * FROM captcha_codes " +
             "WHERE captcha_codes.code = :code " +
