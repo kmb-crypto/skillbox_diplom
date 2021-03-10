@@ -37,11 +37,6 @@ public class SettingsService {
     }
 
     private boolean valueToBoolean(final GlobalSetting setting) {
-        if (setting.getValue().equals(InitSettings.getYES())) {
-
-            return true;
-        } else {
-            return false;
-        }
+        return setting.getValue().equals(InitSettings.getYES());
     }
 }
