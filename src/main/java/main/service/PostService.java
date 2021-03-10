@@ -202,6 +202,8 @@ public class PostService {
         postByIdResponse.setLikeCount(likes);
         postByIdResponse.setDislikeCount(dislikes);
 
+        postByIdResponse.setViewCount(post.getViewCount());
+
         List<CommentsResponseDto> commentsResponseDtoList = new ArrayList<>();
 
         for (PostComment comment : post.getPostComments()) {
