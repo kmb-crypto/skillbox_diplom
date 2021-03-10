@@ -36,7 +36,6 @@ public class AuthService {
         String name = newUserDto.getName().trim().replaceAll("\\s+", " ");
         HashMap<String, String> errors = new HashMap<>();
         boolean result = true;
-    //    if (userRepository.getUserByEmail(newUserDto.getEmail()) != null) {
             if (userRepository.findByEmail(newUserDto.getEmail()) != null) {
             errors.put("email", "Этот e-mail уже зарегистрирован");
             result = false;
