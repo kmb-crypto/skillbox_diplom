@@ -55,10 +55,6 @@ public class PostService {
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
             Collection<Post> postsCollection = new ArrayList<>();
 
-            offset = offsetCheck(offset);
-            limit = limitCheck(limit);
-            mode = modeCheck(mode);
-
             switch (mode) {
                 case "best":
                     postsCollection = postRepository.findBestPosts(PageRequest.of((offset / limit), limit));
@@ -94,9 +90,6 @@ public class PostService {
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
             Collection<Post> postsCollection;
 
-            limit = limitCheck(limit);
-            offset = offsetCheck(offset);
-
             postsCollection = postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit));
 
             postsCollection.forEach(p -> {
@@ -118,9 +111,6 @@ public class PostService {
                 List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
                 Collection<Post> postsCollection;
 
-                limit = limitCheck(limit);
-                offset = offsetCheck(offset);
-
                 postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
                 postsCollection.forEach(p -> {
                     postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
@@ -134,9 +124,6 @@ public class PostService {
     public PostsResponse getPostsByTagResponse(Integer offset, Integer limit, final String tag) {
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
         Collection<Post> postsCollection;
-
-        limit = limitCheck(limit);
-        offset = offsetCheck(offset);
 
         postsCollection = postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit));
         postsCollection.forEach(p -> {
@@ -243,17 +230,6 @@ public class PostService {
         }
     }
 
-    private int limitCheck(Integer limit) {
-        return limit == null || limit == 0 ? defaultPageLimit : limit;
-    }
-
-    private int offsetCheck(Integer offset) {
-        return offset == null ? 0 : offset;
-    }
-
-    private String modeCheck(String mode) {
-        return mode == null ? DEFAULT_MODE : mode;
-    }
 }
 
 
