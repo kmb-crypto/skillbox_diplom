@@ -30,6 +30,8 @@ public class PostService {
     @Value("${blog.announce.length}")
     private int announceLength;
 
+    private static final String DEFAULT_MODE = "recent";
+
     private final PostRepository postRepository;
     private final PostVotesRepository postVotesRepository;
     private final PostCommentRepository postCommentRepository;
@@ -44,7 +46,7 @@ public class PostService {
         this.postCommentRepository = postCommentRepository;
     }
 
-    public PostsResponse getPostsResponse(final int offset, int limit, final String mode) {
+    public PostsResponse getPostsResponse(Integer offset, Integer limit, String mode) {
         int count = postRepository.countAllAvailablePosts();
         if (count == 0) {
             return new PostsResponse(count, new ArrayList<>());
@@ -53,7 +55,9 @@ public class PostService {
             List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
             Collection<Post> postsCollection = new ArrayList<>();
 
+            offset = offsetCheck(offset);
             limit = limitCheck(limit);
+            mode = modeCheck(mode);
 
             switch (mode) {
                 case "best":
@@ -82,7 +86,7 @@ public class PostService {
 
     }
 
-    public PostsResponse getPostsByDateResponse(final int offset, int limit, final String date) {
+    public PostsResponse getPostsByDateResponse(Integer offset, Integer limit, final String date) {
         int count = postRepository.countAllAvailablePostsByDate(date);
         if (count == 0) {
             return new PostsResponse(count, new ArrayList<>());
@@ -91,6 +95,7 @@ public class PostService {
             Collection<Post> postsCollection;
 
             limit = limitCheck(limit);
+            offset = offsetCheck(offset);
 
             postsCollection = postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit));
 
@@ -101,10 +106,10 @@ public class PostService {
         }
     }
 
-    public PostsResponse getPostsByQueryResponse(final int offset, int limit, String query) {
+    public PostsResponse getPostsByQueryResponse(Integer offset, Integer limit, String query) {
         query = query.trim().replaceAll("\\s+", " ");
         if (query.equals("")) {
-            return getPostsResponse(offset, limit, "recent");
+            return getPostsResponse(offset, limit, DEFAULT_MODE);
         } else {
             int count = postRepository.countAllAvailablePostsByQuery(query);
             if (count == 0) {
@@ -114,6 +119,7 @@ public class PostService {
                 Collection<Post> postsCollection;
 
                 limit = limitCheck(limit);
+                offset = offsetCheck(offset);
 
                 postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
                 postsCollection.forEach(p -> {
@@ -125,11 +131,12 @@ public class PostService {
         }
     }
 
-    public PostsResponse getPostsByTagResponse(final int offset, int limit, final String tag) {
+    public PostsResponse getPostsByTagResponse(Integer offset, Integer limit, final String tag) {
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
         Collection<Post> postsCollection;
 
         limit = limitCheck(limit);
+        offset = offsetCheck(offset);
 
         postsCollection = postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit));
         postsCollection.forEach(p -> {
@@ -236,8 +243,16 @@ public class PostService {
         }
     }
 
-    private int limitCheck(int limit) {
-        return limit == 0 ? defaultPageLimit : limit;
+    private int limitCheck(Integer limit) {
+        return limit == null || limit == 0 ? defaultPageLimit : limit;
+    }
+
+    private int offsetCheck(Integer offset) {
+        return offset == null ? 0 : offset;
+    }
+
+    private String modeCheck(String mode) {
+        return mode == null ? DEFAULT_MODE : mode;
     }
 }
 

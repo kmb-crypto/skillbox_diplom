@@ -21,26 +21,25 @@ public class ApiPostController {
         this.postService = postService;
     }
 
-    @GetMapping(value = "/post",
-            params = {"offset", "limit", "mode"})
+    @GetMapping(value = "/post")
     private ResponseEntity getPosts(
-            @RequestParam("offset") final int offset,
-            @RequestParam("limit") final int limit,
-            @RequestParam("mode") final String mode) {
+            @RequestParam(value = "offset", required = false) final Integer offset,
+            @RequestParam(value = "limit", required = false) final Integer limit,
+            @RequestParam(value = "mode", required = false) final String mode) {
 
         return new ResponseEntity(postService.getPostsResponse(offset, limit, mode), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/byDate")
-    private ResponseEntity getPostsByDate(@RequestParam("offset") final int offset,
-                                          @RequestParam("limit") final int limit,
+    private ResponseEntity getPostsByDate(@RequestParam(value = "offset", required = false) final Integer offset,
+                                          @RequestParam(value = "limit", required = false) final Integer limit,
                                           @RequestParam("date") final String date) {
         return new ResponseEntity(postService.getPostsByDateResponse(offset, limit, date), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/search")
-    private ResponseEntity getPostsBySearch(@RequestParam("offset") final int offset,
-                                            @RequestParam("limit") final int limit,
+    private ResponseEntity getPostsBySearch(@RequestParam(value = "offset", required = false) final Integer offset,
+                                            @RequestParam(value = "limit", required = false) final Integer limit,
                                             @RequestParam("query") final String query) {
         return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
 
