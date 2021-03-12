@@ -133,7 +133,6 @@ public class PostService {
 
     }
 
-    //TODO UPDATE
     public PostByIdResponse getPostById(final int id) {
 
         Post post = postRepository.findPostById(id);
@@ -141,8 +140,7 @@ public class PostService {
         if (post == null) {
             return null;
         } else {
-            post.setViewCount(post.getViewCount() + 1);
-            postRepository.save(post);
+            postRepository.updateViewCount(id);
             return postEntityToResponseById(post, id);
         }
     }

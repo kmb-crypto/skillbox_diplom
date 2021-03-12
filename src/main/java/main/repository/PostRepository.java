@@ -4,10 +4,12 @@ import main.dto.AmountOfPostsByDay;
 import main.dto.CalendarYearNative;
 import main.model.Post;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -89,4 +91,11 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
 
     @Query(value = "SELECT * FROM posts WHERE posts.id = :id", nativeQuery = true)
     Post findPostById(@Param("id") int id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE posts SET posts.view_count = posts.view_count + 1 WHERE posts.id = :id",
+    nativeQuery = true)
+    void updateViewCount(@Param("id") int id);
+
 }
