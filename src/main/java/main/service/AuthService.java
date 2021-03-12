@@ -7,6 +7,7 @@ import main.model.User;
 import main.repository.CaptchaRepository;
 import main.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -17,13 +18,16 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final CaptchaRepository captchaRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private static final int PASSWORD_LENGTH_THRESHOLD = 6;
 
     @Autowired
-    public AuthService(final UserRepository userRepository, final CaptchaRepository captchaRepository) {
+    public AuthService(final UserRepository userRepository, final CaptchaRepository captchaRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.captchaRepository = captchaRepository;
+
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -36,7 +40,7 @@ public class AuthService {
         String name = newUserDto.getName().trim().replaceAll("\\s+", " ");
         HashMap<String, String> errors = new HashMap<>();
         boolean result = true;
-            if (userRepository.findByEmail(newUserDto.getEmail()) != null) {
+        if (userRepository.findByEmail(newUserDto.getEmail()) != null) {
             errors.put("email", "Этот e-mail уже зарегистрирован");
             result = false;
         }
@@ -79,11 +83,12 @@ public class AuthService {
         User user = new User();
         user.setEmail(newUserDto.getEmail());
         user.setName(newUserDto.getName());
-        user.setPassword(newUserDto.getPassword());
+        user.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
         user.setRegTime(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
     }
 }
+
 
 //{
 //        "result": true,

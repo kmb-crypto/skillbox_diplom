@@ -23,31 +23,31 @@ public class ApiPostController {
 
     @GetMapping(value = "/post")
     private ResponseEntity getPosts(
-            @RequestParam(value = "offset", required = false, defaultValue = "0") final Integer offset,
-            @RequestParam(value = "limit", required = false, defaultValue = "10") final Integer limit,
-            @RequestParam(value = "mode", required = false, defaultValue = "recent") final String mode) {
+            @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+            @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
+            @RequestParam(value = "mode", defaultValue = "recent") final String mode) {
 
         return new ResponseEntity(postService.getPostsResponse(offset, limit, mode), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/byDate")
-    private ResponseEntity getPostsByDate(@RequestParam(value = "offset", required = false, defaultValue = "0") final Integer offset,
-                                          @RequestParam(value = "limit", required = false, defaultValue = "10") final Integer limit,
+    private ResponseEntity getPostsByDate(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+                                          @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
                                           @RequestParam("date") final String date) {
         return new ResponseEntity(postService.getPostsByDateResponse(offset, limit, date), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/search")
-    private ResponseEntity getPostsBySearch(@RequestParam(value = "offset", required = false, defaultValue = "0") final Integer offset,
-                                            @RequestParam(value = "limit", required = false, defaultValue = "10") final Integer limit,
+    private ResponseEntity getPostsBySearch(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+                                            @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
                                             @RequestParam("query") final String query) {
         return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
 
     }
 
     @GetMapping(value = "/post/byTag")
-    private ResponseEntity getPostsByTag(@RequestParam(value = "offset", required = false, defaultValue = "0") final int offset,
-                                         @RequestParam(value = "limit", required = false, defaultValue = "10") final int limit,
+    private ResponseEntity getPostsByTag(@RequestParam(value = "offset", defaultValue = "0") final int offset,
+                                         @RequestParam(value = "limit", defaultValue = "10") final int limit,
                                          @RequestParam("tag") final String tag) {
         return new ResponseEntity(postService.getPostsByTagResponse(offset, limit, tag), HttpStatus.OK);
     }
