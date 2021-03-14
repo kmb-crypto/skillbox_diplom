@@ -2,7 +2,7 @@ package main.service;
 
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
-import main.dto.NewUserDto;
+import main.dto.NewUserRequest;
 import main.model.User;
 import main.repository.CaptchaRepository;
 import main.repository.UserRepository;
@@ -26,21 +26,20 @@ public class AuthService {
     public AuthService(final UserRepository userRepository, final CaptchaRepository captchaRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.captchaRepository = captchaRepository;
-
         this.passwordEncoder = passwordEncoder;
     }
 
 
-    public AuthResponse authResponse() {
+    public AuthResponse getAuthResponse() {
         AuthResponse authResponse = new AuthResponse();
         return authResponse;
     }
 
-    public AuthRegisterResponse authRegisterResponse(final NewUserDto newUserDto) {
-        String name = newUserDto.getName().trim().replaceAll("\\s+", " ");
+    public AuthRegisterResponse getAuthRegisterResponse(final NewUserRequest newUserRequest) {
+        String name = newUserRequest.getName().trim().replaceAll("\\s+", " ");
         HashMap<String, String> errors = new HashMap<>();
         boolean result = true;
-        if (userRepository.findByEmail(newUserDto.getEmail()) != null) {
+        if (userRepository.findByEmail(newUserRequest.getEmail()) != null) {
             errors.put("email", "Этот e-mail уже зарегистрирован");
             result = false;
         }
@@ -50,19 +49,19 @@ public class AuthService {
             result = false;
         }
 
-        if (newUserDto.getPassword().length() < PASSWORD_LENGTH_THRESHOLD) {
+        if (newUserRequest.getPassword().length() < PASSWORD_LENGTH_THRESHOLD) {
             errors.put("password", "Пароль короче 6-ти символов");
             result = false;
         }
 
-        if (captchaRepository.getCaptchaCode(newUserDto.getCaptcha(), newUserDto.getCaptchaSecret()) == null) {
+        if (captchaRepository.getCaptchaCode(newUserRequest.getCaptcha(), newUserRequest.getCaptchaSecret()) == null) {
             errors.put("captcha", "Код с картинки введён неверно");
             result = false;
         }
 
         if (result) {
 
-            addNewUser(userRepository, newUserDto);
+            addNewUser(userRepository, newUserRequest);
             return new AuthRegisterResponse(result);
 
         } else {
@@ -79,11 +78,11 @@ public class AuthService {
         }
     }
 
-    private void addNewUser(final UserRepository userRepository, final NewUserDto newUserDto) {
+    private void addNewUser(final UserRepository userRepository, final NewUserRequest newUserRequest) {
         User user = new User();
-        user.setEmail(newUserDto.getEmail());
-        user.setName(newUserDto.getName());
-        user.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
+        user.setEmail(newUserRequest.getEmail());
+        user.setName(newUserRequest.getName());
+        user.setPassword(passwordEncoder.encode(newUserRequest.getPassword()));
         user.setRegTime(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
     }

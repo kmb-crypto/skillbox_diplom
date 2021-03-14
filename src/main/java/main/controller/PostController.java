@@ -12,12 +12,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-public class ApiPostController {
+public class PostController {
 
     private final PostService postService;
 
     @Autowired
-    public ApiPostController(final PostService postService) {
+    public PostController(final PostService postService) {
         this.postService = postService;
     }
 

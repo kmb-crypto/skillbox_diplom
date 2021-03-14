@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class ApiCalendarController {
+public class CalendarController {
 
     private final CalendarService calendarService;
 
     @Autowired
-    public ApiCalendarController(final CalendarService calendarService) {
+    public CalendarController(final CalendarService calendarService) {
         this.calendarService = calendarService;
     }
 

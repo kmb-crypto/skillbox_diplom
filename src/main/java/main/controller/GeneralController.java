@@ -10,24 +10,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class ApiGeneralController {
+public class GeneralController {
 
     private final SettingsService settingsService;
     private final InitResponse initResponse;
 
     @Autowired
-    public ApiGeneralController(final SettingsService settingsService, final InitResponse initResponse) {
+    public GeneralController(final SettingsService settingsService, final InitResponse initResponse) {
         this.settingsService = settingsService;
         this.initResponse = initResponse;
     }
 
     @GetMapping("/settings")
-    private SettingsResponse settings() {
+    private SettingsResponse getSettings() {
         return settingsService.getGlobalSettings();
     }
 
     @GetMapping("/init")
-    private InitResponse init() {
+    private InitResponse getInitResponse() {
         return initResponse;
     }
 }

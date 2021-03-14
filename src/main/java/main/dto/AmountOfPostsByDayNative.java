@@ -1,6 +1,6 @@
 package main.dto;
 
-public interface AmountOfPostsByDay {
+public interface AmountOfPostsByDayNative {
     String getDate();
     int getAmount();
 }

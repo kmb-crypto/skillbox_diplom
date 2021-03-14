@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class ApiTagController {
+public class TagController {
 
     private final TagService tagService;
 
     @Autowired
-    public ApiTagController(final TagService tagService) {
+    public TagController(final TagService tagService) {
         this.tagService = tagService;
     }
 
     @GetMapping(value = "/tag")
-    private TagsResponse tagResponse(@RequestParam(value = "query", required = false) final String query) {
+    private TagsResponse getTagResponse(@RequestParam(value = "query", required = false) final String query) {
 
-        return tagService.tagResponse(query);
+        return tagService.getTagResponse(query);
     }
 }

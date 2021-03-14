@@ -29,7 +29,7 @@ public class TagService {
         this.tag2PostRepository = tag2PostRepository;
     }
 
-    public TagsResponse tagResponse(final String query) {
+    public TagsResponse getTagResponse(final String query) {
 
         List<TagNative> tagNativeList;
 
@@ -40,11 +40,11 @@ public class TagService {
             tagNativeList = tagRepository.getQueryTagsWithWeights(query.toLowerCase());
         }
 
-        return new TagsResponse(tagRepository2tagRespDtoList(tagNativeList));
+        return new TagsResponse(tagRepository2tagResponseDtoList(tagNativeList));
 
     }
 
-    private List<TagResponseDto> tagRepository2tagRespDtoList(final List<TagNative> tagNativeList) {
+    private List<TagResponseDto> tagRepository2tagResponseDtoList(final List<TagNative> tagNativeList) {
         List<TagResponseDto> tagResponseDtoList = new ArrayList<>();
         float maxNotNormedWeight = 0.00f;
 

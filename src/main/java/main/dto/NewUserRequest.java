@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @AllArgsConstructor
-public class NewUserDto {
+public class NewUserRequest {
     @JsonProperty(value = "e_mail")
     private String email;
 

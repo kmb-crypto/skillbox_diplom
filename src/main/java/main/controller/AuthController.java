@@ -2,30 +2,30 @@ package main.controller;
 
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
-import main.dto.NewUserDto;
+import main.dto.NewUserRequest;
 import main.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class ApiAuthController {
+public class AuthController {
 
     private final AuthService authService;
 
     @Autowired
-    public ApiAuthController(final AuthService authService) {
+    public AuthController(final AuthService authService) {
         this.authService = authService;
     }
 
     @GetMapping("/auth/check")
-    private AuthResponse authResponse() {
-        return authService.authResponse();
+    private AuthResponse getAuthResponse() {
+        return authService.getAuthResponse();
     }
 
     @PostMapping("/auth/register")
-    private AuthRegisterResponse authRegisterResponse(@RequestBody final NewUserDto newUserDto) {
-                return authService.authRegisterResponse(newUserDto);
+    private AuthRegisterResponse getAuthRegisterResponse(@RequestBody final NewUserRequest newUserRequest) {
+                return authService.getAuthRegisterResponse(newUserRequest);
     }
 
 }

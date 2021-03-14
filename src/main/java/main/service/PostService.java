@@ -63,13 +63,13 @@ public class PostService {
                     postsCollection = postRepository.findPopularPosts(PageRequest.of((offset / limit), limit));
                     break;
                 case "recent":
-                    postsCollection = timeModePostCollection(postRepository,
+                    postsCollection = getTimeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
                                     Sort.by(Sort.Direction.DESC, "time")));
                     break;
                 case "early":
-                    postsCollection = timeModePostCollection(postRepository,
+                    postsCollection = getTimeModePostCollection(postRepository,
                             PageRequest.of((offset / limit),
                                     limit,
                                     Sort.by(Sort.Direction.ASC, "time")));
@@ -145,7 +145,7 @@ public class PostService {
         }
     }
 
-    private Collection<Post> timeModePostCollection(final PostRepository repository, final Pageable pageable) {
+    private Collection<Post> getTimeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
     }
 

@@ -1,6 +1,6 @@
 package main.repository;
 
-import main.dto.AmountOfPostsByDay;
+import main.dto.AmountOfPostsByDayNative;
 import main.dto.CalendarYearNative;
 import main.model.Post;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +50,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
             "AND EXTRACT(YEAR FROM posts.time) = :year " +
             "GROUP BY CAST(posts.time AS date)",
             nativeQuery = true)
-    List<AmountOfPostsByDay> getAmountOfPostsByDay(@Param("year") int year);
+    List<AmountOfPostsByDayNative> getAmountOfPostsByDay(@Param("year") int year);
 
     @Query(value = "SELECT * FROM posts " +
             "WHERE is_active = 1 AND time < now() AND moderation_status = 'ACCEPTED' " +
