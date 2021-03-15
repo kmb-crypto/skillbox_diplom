@@ -5,6 +5,7 @@ import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class PostController {
     }
 
     @GetMapping(value = "/post")
+    @PreAuthorize("hasAuthority('user:write')")
     private ResponseEntity getPosts(
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") final Integer limit,

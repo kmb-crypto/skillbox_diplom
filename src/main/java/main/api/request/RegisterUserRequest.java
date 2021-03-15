@@ -1,4 +1,4 @@
-package main.dto;
+package main.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @AllArgsConstructor
-public class NewUserRequest {
+public class RegisterUserRequest {
     @JsonProperty(value = "e_mail")
     private String email;
 

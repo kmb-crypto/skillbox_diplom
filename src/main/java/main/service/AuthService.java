@@ -2,7 +2,7 @@ package main.service;
 
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
-import main.dto.NewUserRequest;
+import main.api.request.RegisterUserRequest;
 import main.model.User;
 import main.repository.CaptchaRepository;
 import main.repository.UserRepository;
@@ -35,11 +35,11 @@ public class AuthService {
         return authResponse;
     }
 
-    public AuthRegisterResponse getAuthRegisterResponse(final NewUserRequest newUserRequest) {
-        String name = newUserRequest.getName().trim().replaceAll("\\s+", " ");
+    public AuthRegisterResponse getAuthRegisterResponse(final RegisterUserRequest registerUserRequest) {
+        String name = registerUserRequest.getName().trim().replaceAll("\\s+", " ");
         HashMap<String, String> errors = new HashMap<>();
         boolean result = true;
-        if (userRepository.findByEmail(newUserRequest.getEmail()) != null) {
+        if (userRepository.findByEmail(registerUserRequest.getEmail()).isPresent()) {
             errors.put("email", "Этот e-mail уже зарегистрирован");
             result = false;
         }
@@ -49,19 +49,19 @@ public class AuthService {
             result = false;
         }
 
-        if (newUserRequest.getPassword().length() < PASSWORD_LENGTH_THRESHOLD) {
+        if (registerUserRequest.getPassword().length() < PASSWORD_LENGTH_THRESHOLD) {
             errors.put("password", "Пароль короче 6-ти символов");
             result = false;
         }
 
-        if (captchaRepository.getCaptchaCode(newUserRequest.getCaptcha(), newUserRequest.getCaptchaSecret()) == null) {
+        if (captchaRepository.getCaptchaCode(registerUserRequest.getCaptcha(), registerUserRequest.getCaptchaSecret()) == null) {
             errors.put("captcha", "Код с картинки введён неверно");
             result = false;
         }
 
         if (result) {
 
-            addNewUser(userRepository, newUserRequest);
+            addNewUser(userRepository, registerUserRequest);
             return new AuthRegisterResponse(result);
 
         } else {
@@ -78,11 +78,11 @@ public class AuthService {
         }
     }
 
-    private void addNewUser(final UserRepository userRepository, final NewUserRequest newUserRequest) {
+    private void addNewUser(final UserRepository userRepository, final RegisterUserRequest registerUserRequest) {
         User user = new User();
-        user.setEmail(newUserRequest.getEmail());
-        user.setName(newUserRequest.getName());
-        user.setPassword(passwordEncoder.encode(newUserRequest.getPassword()));
+        user.setEmail(registerUserRequest.getEmail());
+        user.setName(registerUserRequest.getName());
+        user.setPassword(passwordEncoder.encode(registerUserRequest.getPassword()));
         user.setRegTime(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
     }

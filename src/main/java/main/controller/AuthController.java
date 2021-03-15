@@ -1,10 +1,13 @@
 package main.controller;
 
+import main.api.request.LoginRequest;
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
-import main.dto.NewUserRequest;
+import main.api.request.RegisterUserRequest;
+import main.api.response.LoginResponse;
 import main.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +27,13 @@ public class AuthController {
     }
 
     @PostMapping("/auth/register")
-    private AuthRegisterResponse getAuthRegisterResponse(@RequestBody final NewUserRequest newUserRequest) {
-                return authService.getAuthRegisterResponse(newUserRequest);
+    private AuthRegisterResponse getAuthRegisterResponse(@RequestBody final RegisterUserRequest registerUserRequest) {
+        return authService.getAuthRegisterResponse(registerUserRequest);
+    }
+
+    @PostMapping("/auth/login")
+    private ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(new LoginResponse());
     }
 
 }

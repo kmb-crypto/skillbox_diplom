@@ -13,9 +13,4 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ComponentScan("main.java.main")
 public class SpringConfig {
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
     }
-
-}

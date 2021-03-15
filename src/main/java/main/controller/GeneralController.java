@@ -4,6 +4,7 @@ import main.api.response.InitResponse;
 import main.api.response.SettingsResponse;
 import main.service.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,7 @@ public class GeneralController {
     }
 
     @GetMapping("/init")
+    @PreAuthorize("hasAuthority('user:write')")
     private InitResponse getInitResponse() {
         return initResponse;
     }

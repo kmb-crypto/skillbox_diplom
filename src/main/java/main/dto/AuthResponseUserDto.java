@@ -6,8 +6,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthResponseUserDto {
-
-
+        private String id;
+        private String name;
+        private String photo;
+        private String email;
+        private boolean moderation;
+        private int moderationCount;
+        private boolean settings;
 }
 
 //{

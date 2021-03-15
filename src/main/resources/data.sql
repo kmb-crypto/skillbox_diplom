@@ -1,9 +1,9 @@
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-06-25 15:32:06.427' AS DateTime),'Алёша Попович','mail@mail.ru','123456',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,'privet',CAST('2019-06-25 15:33:06.427' AS DateTime),'Линус Торвальдс','lt@gmail.com','654321',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-08-20 15:33:06.427' AS DateTime),'Vasya Sidorov','mail2@mail.com','123456',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,null,CAST('2019-09-10 10:33:06.427' AS DateTime),'Margo','mail3@mail.com','qwerty',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-10-05 10:45:06.427' AS DateTime),'Петя','mail4@mail.com','asdfgh',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2020-11-05 10:45:06.427' AS DateTime),'Pasha','mail5@mail.com','asdfgh',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-06-25 15:32:06.427' AS DateTime),'Алёша Попович','mail@mail.ru','$2y$12$CjGJJ6cr5lZZA74h.QyxROZzh6T8hPCxoJ6nw8P7d6Wn/wxf0LFUy',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,'privet',CAST('2019-06-25 15:33:06.427' AS DateTime),'Линус Торвальдс','lt@gmail.com','$2y$12$slGK0gXx1ite6gqVHKBc6.hO.HNIE19L6Z6kZgQOOT3DEf1Y7Xrh.',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-08-20 15:33:06.427' AS DateTime),'Vasya Sidorov','mail2@mail.com','$2y$12$ky/XtiqoepwuJ7XGU1/BCuOyJR0.fj61zQfolZG6nbs8RkDTkVweW',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,null,CAST('2019-09-10 10:33:06.427' AS DateTime),'Margo','mail3@mail.com','$2y$12$RYTEYJbAQZN/MGB26ftfyuYTD3AEPL7bVwJkywaxhFGDvQFGbHMXu',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-10-05 10:45:06.427' AS DateTime),'Петя','mail4@mail.com','$2y$12$Nc57SmRZe00RwBTg1pO0MO0CrrNcosk5jOQEXkfyhSLOaAHWI55YK',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2020-11-05 10:45:06.427' AS DateTime),'Pasha','mail5@mail.com','$2y$12$Br1Z5aTYmrUixsyxIwNICuL2cYIkTYCLdoS7E0d7k8MG7j0HeH17O',null);
 
 INSERT INTO posts (is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (1, 'ACCEPTED', 2, 'Самая 1 запись' , CAST('2019-06-29 18:32:06.427' AS DateTime), 'Первая запись', 2,1 );
 INSERT INTO posts (is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (1, 'ACCEPTED', 2, 'Очень <b>2 запись</b> <u>запись</u> Сразу после завершения работы над стандартом SQL1 в 1987 году была начата работа над новой версией стандарта, который должен был заменить стандарт SQL89, получив название SQL2, поскольку дата принятия документа на тот момент была неизвестна.' , CAST('2019-12-29 19:32:06.427' AS DateTime), 'Вторая запись', 5,2 );
