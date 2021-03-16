@@ -20,7 +20,7 @@ public class CalendarController {
     }
 
     @GetMapping(value = "/calendar")
-    private CalendarResponse getCalendarNumberOfPosts(
+    public CalendarResponse getCalendarNumberOfPosts(
             @RequestParam(value = "year", required = false) final Integer year) {
         return calendarService.getCalendarResponse(year);
     }

@@ -23,8 +23,7 @@ public class PostController {
     }
 
     @GetMapping(value = "/post")
-    @PreAuthorize("hasAuthority('user:write')")
-    private ResponseEntity getPosts(
+    public ResponseEntity getPosts(
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
             @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
             @RequestParam(value = "mode", defaultValue = "recent") final String mode) {
@@ -33,14 +32,14 @@ public class PostController {
     }
 
     @GetMapping(value = "/post/byDate")
-    private ResponseEntity getPostsByDate(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+    public ResponseEntity getPostsByDate(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
                                           @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
                                           @RequestParam("date") final String date) {
         return new ResponseEntity(postService.getPostsByDateResponse(offset, limit, date), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/search")
-    private ResponseEntity getPostsBySearch(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+    public ResponseEntity getPostsBySearch(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
                                             @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
                                             @RequestParam("query") final String query) {
         return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
@@ -48,14 +47,14 @@ public class PostController {
     }
 
     @GetMapping(value = "/post/byTag")
-    private ResponseEntity getPostsByTag(@RequestParam(value = "offset", defaultValue = "0") final int offset,
+    public ResponseEntity getPostsByTag(@RequestParam(value = "offset", defaultValue = "0") final int offset,
                                          @RequestParam(value = "limit", defaultValue = "10") final int limit,
                                          @RequestParam("tag") final String tag) {
         return new ResponseEntity(postService.getPostsByTagResponse(offset, limit, tag), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/{id}")
-    private ResponseEntity getPostById(@PathVariable final int id) {
+    public ResponseEntity getPostById(@PathVariable final int id) {
 
         Optional<PostByIdResponse> optionalPostByIdResponse = Optional.ofNullable(postService.getPostById(id));
         if (optionalPostByIdResponse.isEmpty()) {

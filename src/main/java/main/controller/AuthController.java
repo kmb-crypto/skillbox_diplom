@@ -22,17 +22,17 @@ public class AuthController {
     }
 
     @GetMapping("/auth/check")
-    private AuthResponse getAuthResponse() {
+    public AuthResponse getAuthResponse() {
         return authService.getAuthResponse();
     }
 
     @PostMapping("/auth/register")
-    private AuthRegisterResponse getAuthRegisterResponse(@RequestBody final RegisterUserRequest registerUserRequest) {
+    public AuthRegisterResponse getAuthRegisterResponse(@RequestBody final RegisterUserRequest registerUserRequest) {
         return authService.getAuthRegisterResponse(registerUserRequest);
     }
 
     @PostMapping("/auth/login")
-    private ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(new LoginResponse());
     }
 

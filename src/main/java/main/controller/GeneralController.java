@@ -23,13 +23,12 @@ public class GeneralController {
     }
 
     @GetMapping("/settings")
-    private SettingsResponse getSettings() {
+    public SettingsResponse getSettings() {
         return settingsService.getGlobalSettings();
     }
 
     @GetMapping("/init")
-    @PreAuthorize("hasAuthority('user:write')")
-    private InitResponse getInitResponse() {
+    public InitResponse getInitResponse() {
         return initResponse;
     }
 }

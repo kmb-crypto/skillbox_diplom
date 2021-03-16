@@ -20,7 +20,7 @@ public class TagController {
     }
 
     @GetMapping(value = "/tag")
-    private TagsResponse getTagResponse(@RequestParam(value = "query", required = false) final String query) {
+    public TagsResponse getTagResponse(@RequestParam(value = "query", required = false) final String query) {
 
         return tagService.getTagResponse(query);
     }

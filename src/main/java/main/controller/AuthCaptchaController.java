@@ -18,7 +18,7 @@ public class AuthCaptchaController {
     }
 
     @GetMapping(value = "/auth/captcha")
-    private CaptchaResponse getCaptcha() {
+    public CaptchaResponse getCaptcha() {
         return captchaService.captchaGenerator();
     }
 }
