@@ -7,13 +7,13 @@ import main.api.request.RegisterUserRequest;
 import main.dto.AuthResponseUserDto;
 import main.model.User;
 import main.repository.CaptchaRepository;
+import main.repository.PostRepository;
 import main.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final CaptchaRepository captchaRepository;
+    private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -35,10 +36,12 @@ public class AuthService {
     @Autowired
     public AuthService(final UserRepository userRepository,
                        final CaptchaRepository captchaRepository,
+                       final PostRepository postRepository,
                        final PasswordEncoder passwordEncoder,
                        final AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.captchaRepository = captchaRepository;
+        this.postRepository = postRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
@@ -128,8 +131,8 @@ public class AuthService {
             authResponseUserDto.setPhoto(currentUser.getPhoto());
             authResponseUserDto.setEmail(currentUser.getEmail());
             authResponseUserDto.setModeration(currentUser.getIsModerator() == 1);
-            //TODO make moderationcount
-            authResponseUserDto.setModerationCount(0);
+            authResponseUserDto.setModerationCount(
+                    currentUser.getIsModerator() == 1 ? postRepository.countAllNewPosts() : 0);
             authResponseUserDto.setSettings(currentUser.getIsModerator() == 1);
             return new AuthResponse(true, authResponseUserDto);
         } else return new AuthResponse();

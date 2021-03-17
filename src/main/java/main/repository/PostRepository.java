@@ -90,13 +90,16 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
             "tags.name LIKE :tag", nativeQuery = true)
     Integer countAllAvailablePostsByTag(@Param("tag") String tag);
 
-    @Query(value = "SELECT * FROM posts WHERE posts.id = :id", nativeQuery = true)
     Post findPostById(@Param("id") int id);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "WHERE moderation_status = 'NEW' AND moderator_id IS null", nativeQuery = true)
+    Integer countAllNewPosts();
 
     @Transactional
     @Modifying
     @Query(value = "UPDATE posts SET posts.view_count = posts.view_count + 1 WHERE posts.id = :id",
-    nativeQuery = true)
+            nativeQuery = true)
     void updateViewCount(@Param("id") int id);
 
 }
