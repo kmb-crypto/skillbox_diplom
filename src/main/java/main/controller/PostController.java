@@ -22,6 +22,7 @@ public class PostController {
         this.postService = postService;
     }
 
+//    @PreAuthorize("hasAuthority('user:write')")
     @GetMapping(value = "/post")
     public ResponseEntity getPosts(
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
