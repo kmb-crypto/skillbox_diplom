@@ -4,6 +4,7 @@ import main.api.request.LoginRequest;
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
 import main.api.request.RegisterUserRequest;
+import main.api.response.LogoutResponse;
 import main.dto.AuthResponseUserDto;
 import main.model.User;
 import main.repository.CaptchaRepository;
@@ -70,6 +71,11 @@ public class AuthService {
 
             return user2authResponseUserDto(optionalUser.get());
         }
+    }
+
+    public LogoutResponse getLogoutResponse (){
+        SecurityContextHolder.clearContext();
+        return new LogoutResponse(true);
     }
 
     public AuthRegisterResponse getAuthRegisterResponse(final RegisterUserRequest registerUserRequest) {

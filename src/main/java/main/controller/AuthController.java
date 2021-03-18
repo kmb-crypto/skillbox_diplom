@@ -31,8 +31,8 @@ public class AuthController {
 
     @GetMapping("/auth/logout")
     public ResponseEntity<LogoutResponse> logout(){
-        //TODO logout
-        return ResponseEntity.ok(new LogoutResponse(true));
+
+        return ResponseEntity.ok(authService.getLogoutResponse());
     }
 
     @PostMapping("/auth/register")
