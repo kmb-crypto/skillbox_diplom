@@ -4,6 +4,7 @@ import main.api.request.LoginRequest;
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
 import main.api.request.RegisterUserRequest;
+import main.api.response.LogoutResponse;
 import main.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,12 @@ public class AuthController {
     @GetMapping("/auth/check")
     public ResponseEntity<AuthResponse> getAuthResponse(Principal principal) {
         return ResponseEntity.ok(authService.checkAuthResponse(principal));
+    }
+
+    @GetMapping("/auth/logout")
+    public ResponseEntity<LogoutResponse> logout(){
+        //TODO logout
+        return ResponseEntity.ok(new LogoutResponse(true));
     }
 
     @PostMapping("/auth/register")

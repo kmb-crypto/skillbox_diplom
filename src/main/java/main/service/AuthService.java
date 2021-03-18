@@ -51,21 +51,25 @@ public class AuthService {
         if (principal == null) {
             return new AuthResponse();
         } else {
-            return user2authResponseUserDto(principal.getName());
+            return user2authResponseUserDto(userRepository.findByEmail(principal.getName()).get());
         }
     }
 
     public AuthResponse getLoginAuthResponse(final LoginRequest loginRequest) {
-        Authentication auth = authenticationManager
-                .authenticate(
-                        new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        Optional <User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isEmpty()) {
+            return new AuthResponse();
+        } else {
+            Authentication auth = authenticationManager
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-        org.springframework.security.core.userdetails.User user =
-                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+            org.springframework.security.core.userdetails.User user =
+                    (org.springframework.security.core.userdetails.User) auth.getPrincipal();
 
-        return user2authResponseUserDto(user.getUsername());
-
+            return user2authResponseUserDto(optionalUser.get());
+        }
     }
 
     public AuthRegisterResponse getAuthRegisterResponse(final RegisterUserRequest registerUserRequest) {
@@ -120,11 +124,9 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    private AuthResponse user2authResponseUserDto(String email) {
-        Optional<User> optionalUser =
-                userRepository.findByEmail(email);
-        if (optionalUser.isPresent()) {
-            User currentUser = optionalUser.get();
+    private AuthResponse user2authResponseUserDto(User currentUser) {
+
+
             AuthResponseUserDto authResponseUserDto = new AuthResponseUserDto();
             authResponseUserDto.setId(currentUser.getId());
             authResponseUserDto.setName(currentUser.getName());
@@ -135,7 +137,7 @@ public class AuthService {
                     currentUser.getIsModerator() == 1 ? postRepository.countAllNewPosts() : 0);
             authResponseUserDto.setSettings(currentUser.getIsModerator() == 1);
             return new AuthResponse(true, authResponseUserDto);
-        } else return new AuthResponse();
+
     }
 }
 
