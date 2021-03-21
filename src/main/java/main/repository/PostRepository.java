@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -91,6 +90,46 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
     Integer countAllAvailablePostsByTag(@Param("tag") String tag);
 
     Post findPostById(@Param("id") int id);
+
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 0", nativeQuery = true)
+    List<Post> findMyInactivePosts(@Param("email") String email, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 0", nativeQuery = true)
+    Integer countMyInactivePosts(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'NEW'", nativeQuery = true)
+    List<Post> findMyPendingPosts(@Param("email") String email, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'NEW'", nativeQuery = true)
+    Integer countMyPendingPosts(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'DECLINED'", nativeQuery = true)
+    List<Post> findMyDeclinedPosts(@Param("email") String email, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'DECLINED'", nativeQuery = true)
+    Integer countMyDeclinedPosts(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'ACCEPTED'", nativeQuery = true)
+    List<Post> findMyPublishedPosts(@Param("email") String email, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN users ON users.id = user_id " +
+            "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'ACCEPTED'", nativeQuery = true)
+    Integer countMyPublishedPosts(@Param("email") String email);
 
     @Query(value = "SELECT count(*) FROM posts " +
             "WHERE moderation_status = 'NEW' AND moderator_id IS null", nativeQuery = true)

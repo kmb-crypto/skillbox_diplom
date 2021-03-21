@@ -1,6 +1,7 @@
 package main.service;
 
 import main.api.response.CalendarResponse;
+import main.model.ModerationStatus;
 import main.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

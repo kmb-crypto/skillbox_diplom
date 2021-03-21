@@ -1,6 +1,7 @@
 package main.controller;
 
 import main.api.response.PostByIdResponse;
+import main.api.response.PostsResponse;
 import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -22,7 +25,7 @@ public class PostController {
         this.postService = postService;
     }
 
-//    @PreAuthorize("hasAuthority('user:write')")
+    //    @PreAuthorize("hasAuthority('user:write')")
     @GetMapping(value = "/post")
     public ResponseEntity getPosts(
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
@@ -34,23 +37,23 @@ public class PostController {
 
     @GetMapping(value = "/post/byDate")
     public ResponseEntity getPostsByDate(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
-                                          @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
-                                          @RequestParam("date") final String date) {
+                                         @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
+                                         @RequestParam("date") final String date) {
         return new ResponseEntity(postService.getPostsByDateResponse(offset, limit, date), HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/search")
     public ResponseEntity getPostsBySearch(@RequestParam(value = "offset", defaultValue = "0") final Integer offset,
-                                            @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
-                                            @RequestParam("query") final String query) {
+                                           @RequestParam(value = "limit", defaultValue = "10") final Integer limit,
+                                           @RequestParam("query") final String query) {
         return new ResponseEntity(postService.getPostsByQueryResponse(offset, limit, query), HttpStatus.OK);
 
     }
 
     @GetMapping(value = "/post/byTag")
     public ResponseEntity getPostsByTag(@RequestParam(value = "offset", defaultValue = "0") final int offset,
-                                         @RequestParam(value = "limit", defaultValue = "10") final int limit,
-                                         @RequestParam("tag") final String tag) {
+                                        @RequestParam(value = "limit", defaultValue = "10") final int limit,
+                                        @RequestParam("tag") final String tag) {
         return new ResponseEntity(postService.getPostsByTagResponse(offset, limit, tag), HttpStatus.OK);
     }
 
@@ -63,5 +66,15 @@ public class PostController {
         } else {
             return new ResponseEntity(optionalPostByIdResponse.get(), HttpStatus.OK);
         }
+    }
+
+    @GetMapping(value = "/post/my")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity getMyPosts(@RequestParam(value = "offset", defaultValue = "0") final int offset,
+                                     @RequestParam(value = "limit", defaultValue = "10") final int limit,
+                                     @RequestParam(value = "status", defaultValue = "published") final String status,
+                                     Principal principal) {
+        return new ResponseEntity(postService.getMyPosts(offset, limit, status, principal), HttpStatus.OK);
+
     }
 }
