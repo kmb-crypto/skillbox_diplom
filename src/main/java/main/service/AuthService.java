@@ -48,7 +48,7 @@ public class AuthService {
     }
 
 
-    public AuthResponse checkAuthResponse(Principal principal) {
+    public AuthResponse checkAuthResponse(final Principal principal) {
         if (principal == null) {
             return new AuthResponse();
         } else {
@@ -57,8 +57,8 @@ public class AuthService {
     }
 
     public AuthResponse getLoginAuthResponse(final LoginRequest loginRequest) {
-        Optional <User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
-        if (optionalUser.isEmpty()) {
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isEmpty() || !passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
             return new AuthResponse();
         } else {
             Authentication auth = authenticationManager
@@ -73,7 +73,7 @@ public class AuthService {
         }
     }
 
-    public LogoutResponse getLogoutResponse (){
+    public LogoutResponse getLogoutResponse() {
         SecurityContextHolder.clearContext();
         return new LogoutResponse(true);
     }
@@ -133,16 +133,16 @@ public class AuthService {
     private AuthResponse user2authResponseUserDto(User currentUser) {
 
 
-            AuthResponseUserDto authResponseUserDto = new AuthResponseUserDto();
-            authResponseUserDto.setId(currentUser.getId());
-            authResponseUserDto.setName(currentUser.getName());
-            authResponseUserDto.setPhoto(currentUser.getPhoto());
-            authResponseUserDto.setEmail(currentUser.getEmail());
-            authResponseUserDto.setModeration(currentUser.getIsModerator() == 1);
-            authResponseUserDto.setModerationCount(
-                    currentUser.getIsModerator() == 1 ? postRepository.countAllNewPosts() : 0);
-            authResponseUserDto.setSettings(currentUser.getIsModerator() == 1);
-            return new AuthResponse(true, authResponseUserDto);
+        AuthResponseUserDto authResponseUserDto = new AuthResponseUserDto();
+        authResponseUserDto.setId(currentUser.getId());
+        authResponseUserDto.setName(currentUser.getName());
+        authResponseUserDto.setPhoto(currentUser.getPhoto());
+        authResponseUserDto.setEmail(currentUser.getEmail());
+        authResponseUserDto.setModeration(currentUser.getIsModerator() == 1);
+        authResponseUserDto.setModerationCount(
+                currentUser.getIsModerator() == 1 ? postRepository.countAllNewPosts() : 0);
+        authResponseUserDto.setSettings(currentUser.getIsModerator() == 1);
+        return new AuthResponse(true, authResponseUserDto);
 
     }
 }

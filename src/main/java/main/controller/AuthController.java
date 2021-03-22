@@ -25,12 +25,12 @@ public class AuthController {
     }
 
     @GetMapping("/auth/check")
-    public ResponseEntity<AuthResponse> getAuthResponse(Principal principal) {
+    public ResponseEntity<AuthResponse> getAuthResponse(final Principal principal) {
         return ResponseEntity.ok(authService.checkAuthResponse(principal));
     }
 
     @GetMapping("/auth/logout")
-    public ResponseEntity<LogoutResponse> logout(){
+    public ResponseEntity<LogoutResponse> logout() {
 
         return ResponseEntity.ok(authService.getLogoutResponse());
     }

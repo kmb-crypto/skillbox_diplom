@@ -1,7 +1,6 @@
 package main.controller;
 
 import main.api.response.PostByIdResponse;
-import main.api.response.PostsResponse;
 import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -25,7 +23,6 @@ public class PostController {
         this.postService = postService;
     }
 
-    //    @PreAuthorize("hasAuthority('user:write')")
     @GetMapping(value = "/post")
     public ResponseEntity getPosts(
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
@@ -73,7 +70,7 @@ public class PostController {
     public ResponseEntity getMyPosts(@RequestParam(value = "offset", defaultValue = "0") final int offset,
                                      @RequestParam(value = "limit", defaultValue = "10") final int limit,
                                      @RequestParam(value = "status", defaultValue = "published") final String status,
-                                     Principal principal) {
+                                     final Principal principal) {
         return new ResponseEntity(postService.getMyPosts(offset, limit, status, principal), HttpStatus.OK);
 
     }

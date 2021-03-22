@@ -232,7 +232,7 @@ public class PostService {
 
         postByIdResponse.setId(id);
         postByIdResponse.setTimestamp(post.getTime().toLocalDateTime().toEpochSecond(ZoneOffset.of("+03:00")));
-        postByIdResponse.setActive((post.getIsActive() == 0) ? false : true);
+        postByIdResponse.setActive(post.getIsActive() != 0);
 
         User user = post.getUser();
 
