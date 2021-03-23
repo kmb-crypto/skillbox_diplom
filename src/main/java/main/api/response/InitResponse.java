@@ -1,13 +1,11 @@
 package main.api.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@Getter
-@Setter
+@Data
 public class InitResponse {
 
     @Value("${blog.title}")

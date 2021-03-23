@@ -1,15 +1,16 @@
 package main.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "tag2post")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class Tag2Post extends BaseEntity {
 

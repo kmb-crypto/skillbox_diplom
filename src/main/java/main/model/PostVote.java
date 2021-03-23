@@ -1,16 +1,14 @@
 package main.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "post_votes")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class PostVote extends BaseEntity {
 

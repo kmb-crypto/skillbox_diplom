@@ -1,8 +1,7 @@
 package main.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,8 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Post extends BaseEntity {
 
     @Column(name = "is_active", nullable = false)

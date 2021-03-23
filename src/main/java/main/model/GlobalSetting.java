@@ -1,17 +1,17 @@
 package main.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "global_settings")
 @Component
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class GlobalSetting extends BaseEntity {
 

@@ -1,16 +1,16 @@
 package main.api.response;
 
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.TreeSet;
 
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class CalendarResponse {
     private TreeSet<Integer> years;

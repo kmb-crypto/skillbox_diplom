@@ -146,7 +146,7 @@ public class PostService {
         String email = principal.getName();
         int count = 0;
 
-        List<Post> postsCollection = new ArrayList<>();
+        List<Post> postsCollection;
         switch (status) {
             case "inactive":
                 count = postRepository.countMyInactivePosts(email);
@@ -184,6 +184,7 @@ public class PostService {
                             PageRequest.of((offset / limit), limit));
                     break;
                 }
+            default: postsCollection = new ArrayList<>();
         }
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
         postsCollection.forEach(p -> {
