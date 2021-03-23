@@ -144,63 +144,53 @@ public class PostService {
 
     public PostsResponse getMyPosts(final Integer offset, final Integer limit, final String status, Principal principal) {
         String email = principal.getName();
-        int count;
+        int count = 0;
+
+        List<Post> postsCollection = new ArrayList<>();
         switch (status) {
             case "inactive":
                 count = postRepository.countMyInactivePosts(email);
                 if (count == 0) {
                     return new PostsResponse(0, new ArrayList<>());
                 } else {
-                    List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-                    Collection<Post> postsCollection = postRepository.findMyInactivePosts(email,
+                    postsCollection = postRepository.findMyInactivePosts(email,
                             PageRequest.of((offset / limit), limit));
-                    postsCollection.forEach(p -> {
-                        postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
-                    });
-                    return new PostsResponse(count, postsResponseDtoList);
+                    break;
                 }
             case "pending":
-               count = postRepository.countMyPendingPosts(email);
+                count = postRepository.countMyPendingPosts(email);
                 if (count == 0) {
                     return new PostsResponse(0, new ArrayList<>());
                 } else {
-                    List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-                    Collection<Post> postsCollection = postRepository.findMyPendingPosts(email,
+                    postsCollection = postRepository.findMyPendingPosts(email,
                             PageRequest.of((offset / limit), limit));
-                    postsCollection.forEach(p -> {
-                        postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
-                    });
-                    return new PostsResponse(count, postsResponseDtoList);
+                    break;
                 }
             case "declined":
                 count = postRepository.countMyDeclinedPosts(email);
                 if (count == 0) {
                     return new PostsResponse(0, new ArrayList<>());
                 } else {
-                    List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-                    Collection<Post> postsCollection = postRepository.findMyDeclinedPosts(email,
+                    postsCollection = postRepository.findMyDeclinedPosts(email,
                             PageRequest.of((offset / limit), limit));
-                    postsCollection.forEach(p -> {
-                        postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
-                    });
-                    return new PostsResponse(count, postsResponseDtoList);
+                    break;
                 }
             case "published":
                 count = postRepository.countMyPublishedPosts(email);
                 if (count == 0) {
                     return new PostsResponse(0, new ArrayList<>());
                 } else {
-                    List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-                    Collection<Post> postsCollection = postRepository.findMyPublishedPosts(email,
+                    postsCollection = postRepository.findMyPublishedPosts(email,
                             PageRequest.of((offset / limit), limit));
-                    postsCollection.forEach(p -> {
-                        postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
-                    });
-                    return new PostsResponse(count, postsResponseDtoList);
+                    break;
                 }
         }
+        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+        postsCollection.forEach(p -> {
+            postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+        });
+        return new PostsResponse(count, postsResponseDtoList);
 
-        return new PostsResponse(0, new ArrayList<>());
     }
 
     private Collection<Post> getTimeModePostCollection(final PostRepository repository, final Pageable pageable) {
