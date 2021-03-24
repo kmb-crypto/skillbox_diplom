@@ -58,7 +58,8 @@ public class AuthService {
 
     public AuthResponse getLoginAuthResponse(final LoginRequest loginRequest) {
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
-        if (optionalUser.isEmpty() || !passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
+        if (optionalUser.isEmpty()
+                || !passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
             return new AuthResponse();
         } else {
             Authentication auth = authenticationManager

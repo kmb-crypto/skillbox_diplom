@@ -1,6 +1,8 @@
 package main.controller;
 
+import main.api.request.PostRequest;
 import main.api.response.PostByIdResponse;
+import main.api.response.PostCreationResponse;
 import main.api.response.PostsResponse;
 import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +85,13 @@ public class PostController {
                                              @RequestParam(value = "limit", defaultValue = "10") final int limit,
                                              @RequestParam(value = "status", defaultValue = "new") final String status,
                                              final Principal principal) {
-        return new ResponseEntity(postService.getModerationPosts(offset, limit, status, principal),HttpStatus.OK);
+        return new ResponseEntity(postService.getModerationPosts(offset, limit, status, principal), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/post")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity createPost(@RequestBody final PostRequest postRequest, final Principal principal) {
+        return new ResponseEntity(postService.createPost(postRequest, principal), HttpStatus.OK);
     }
 
 }

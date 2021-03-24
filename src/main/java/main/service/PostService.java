@@ -1,6 +1,8 @@
 package main.service;
 
+import main.api.request.PostRequest;
 import main.api.response.PostByIdResponse;
+import main.api.response.PostCreationResponse;
 import main.api.response.PostsResponse;
 import main.dto.CommentsResponseDto;
 import main.dto.CommentsResponseUserDto;
@@ -10,15 +12,20 @@ import main.model.*;
 import main.repository.PostCommentRepository;
 import main.repository.PostRepository;
 import main.repository.PostVotesRepository;
+import main.repository.UserRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.sql.Array;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -32,19 +39,24 @@ public class PostService {
     private int announceLength;
 
     private static final String DEFAULT_MODE = "recent";
+    private static final int MIN_TITLE_LENGHT = 3;
+    private static final int MIN_TEXT_LENGHT = 50;
 
     private final PostRepository postRepository;
     private final PostVotesRepository postVotesRepository;
     private final PostCommentRepository postCommentRepository;
+    private final UserRepository userRepository;
 
 
     @Autowired
     public PostService(final PostRepository postRepository,
                        final PostVotesRepository postVotesRepository,
-                       final PostCommentRepository postCommentRepository) {
+                       final PostCommentRepository postCommentRepository,
+                       final UserRepository userRepository) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
         this.postCommentRepository = postCommentRepository;
+        this.userRepository = userRepository;
     }
 
     public PostsResponse getPostsResponse(final Integer offset, final Integer limit, String mode) {
@@ -240,6 +252,17 @@ public class PostService {
         return new PostsResponse(count, postsResponseDtoList);
     }
 
+    public PostCreationResponse createPost(final PostRequest postRequest, final Principal principal) {
+        HashMap<String, String> errors = checkPostRequest(postRequest);
+        if (errors != null) {
+            return new PostCreationResponse(false, errors);
+        } else {
+            addNewPost(postRequest, principal);
+            return new PostCreationResponse(true);
+        }
+    }
+
+    // PRIVATE PART ---------------------------------------------------------------------------------------------------
     private Collection<Post> getTimeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
     }
@@ -322,6 +345,58 @@ public class PostService {
         } else {
             return Jsoup.parse(text).text();
         }
+    }
+
+    private HashMap<String, String> checkPostRequest(final PostRequest postRequest) {
+        HashMap<String, String> errors = new HashMap<>();
+        if (postRequest.getTitle().length() < MIN_TITLE_LENGHT) {
+
+            errors.put("title", "Заголовок не установлен");
+        }
+        if (postRequest.getText().length() < MIN_TEXT_LENGHT) {
+
+            errors.put("text", "Текст публикации слишком короткий");
+        }
+        if (errors.size() > 0) {
+            return errors;
+        } else {
+            return null;
+        }
+    }
+
+    private void addNewPost(final PostRequest postRequest, final Principal principal) {
+        Post post = new Post();
+        post.setIsActive(postRequest.getActive());
+        post.setModerationStatus(ModerationStatus.NEW);
+        post.setUser(userRepository.findByEmail(principal.getName()).get());
+        post.setTime(checkTimestamp(postRequest.getTimestamp()));
+
+        post.setTitle(postRequest.getTitle());
+        post.setText(postRequest.getText());
+
+        List<String> tags = postRequest.getTags();
+        if (tags.size() > 0) {
+            post.setTags(getTags(tags));
+        }
+
+        postRepository.save(post);
+
+    }
+
+    private Timestamp checkTimestamp(long time) {
+        Instant instant = Instant.ofEpochSecond(time);
+        Instant now = Instant.now();
+        if (instant.isBefore(now)) {
+            return Timestamp.from(now);
+        } else {
+            return Timestamp.from(instant);
+        }
+    }
+
+    private List<Tag> getTags(List<String> tags) {
+        List<Tag> postTags = new ArrayList<>();
+        tags.forEach(t -> postTags.add(new Tag(t.toLowerCase())));
+        return postTags;
     }
 
 }

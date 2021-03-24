@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Tag extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -22,4 +22,7 @@ public class Tag extends BaseEntity {
             inverseJoinColumns = {@JoinColumn(name = "post_id")})
     private List<Post> posts;
 
+    public Tag(String name) {
+        this.name = name;
+    }
 }

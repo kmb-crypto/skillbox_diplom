@@ -88,11 +88,11 @@ INSERT INTO post_comments (parent_id, text, time, post_id, user_id) VALUES (7, '
 
 INSERT INTO tags (name) VALUES ('javacore');
 INSERT INTO tags (name) VALUES ('java');
-INSERT INTO tags (name) VALUES ('Spring');
-INSERT INTO tags (name) VALUES ('Hibernate');
+INSERT INTO tags (name) VALUES ('spring');
+INSERT INTO tags (name) VALUES ('hibernate');
 INSERT INTO tags (name) VALUES ('javadoc');
-INSERT INTO tags (name) VALUES ('Springcore');
-INSERT INTO tags (name) VALUES ('SpringBoot');
+INSERT INTO tags (name) VALUES ('springcore');
+INSERT INTO tags (name) VALUES ('springboot');
 
 INSERT INTO tag2post (post_id, tag_id) VALUES (1,1);
 INSERT INTO tag2post (post_id, tag_id) VALUES (1,2);
