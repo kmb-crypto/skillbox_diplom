@@ -69,7 +69,6 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
             "AND (posts.text LIKE %:query% OR posts.title LIKE %:query%)", nativeQuery = true)
     List<Post> findAllPostsByQuery(@Param("query") String query, Pageable pageable);
 
-
     @Query(value = "SELECT count(*) FROM posts " +
             "WHERE is_active = 1 AND time < now() AND moderation_status='ACCEPTED' " +
             "AND (posts.text LIKE %:query% OR posts.title LIKE %:query%)", nativeQuery = true)
@@ -131,9 +130,33 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Integer
             "WHERE users.email = :email AND is_active = 1 AND moderation_status = 'ACCEPTED'", nativeQuery = true)
     Integer countMyPublishedPosts(@Param("email") String email);
 
+    @Query(value = "SELECT * FROM posts " +
+            "WHERE moderation_status = 'NEW' AND is_active = 1 AND moderator_id IS null", nativeQuery = true)
+    List<Post> findAllNewPosts(Pageable pageable);
+
     @Query(value = "SELECT count(*) FROM posts " +
-            "WHERE moderation_status = 'NEW' AND moderator_id IS null", nativeQuery = true)
+            "WHERE moderation_status = 'NEW' AND is_active = 1 AND moderator_id IS null", nativeQuery = true)
     Integer countAllNewPosts();
+
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN users ON users.id = moderator_id " +
+            "WHERE moderation_status = 'DECLINED' AND users.email = :email", nativeQuery = true)
+    List<Post> findDeclinedPostsByMe(@Param("email") String email, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN users ON users.id = moderator_id " +
+            "WHERE moderation_status = 'DECLINED' AND users.email = :email", nativeQuery = true)
+    Integer countDeclinedPostsByMe(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM posts " +
+            "JOIN users ON users.id = moderator_id " +
+            "WHERE moderation_status = 'ACCEPTED' AND users.email = :email", nativeQuery = true)
+    List<Post> findAcceptedPostsByMe(@Param("email") String email, Pageable pageable);
+
+    @Query(value = "SELECT count(*) FROM posts " +
+            "JOIN users ON users.id = moderator_id " +
+            "WHERE moderation_status = 'ACCEPTED' AND users.email = :email", nativeQuery = true)
+    Integer countAcceptedPostsByMe(@Param("email") String email);
 
     @Transactional
     @Modifying

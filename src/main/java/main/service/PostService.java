@@ -142,7 +142,8 @@ public class PostService {
         }
     }
 
-    public PostsResponse getMyPosts(final Integer offset, final Integer limit, final String status, Principal principal) {
+    public PostsResponse getMyPosts(
+            final Integer offset, final Integer limit, final String status, final Principal principal) {
         String email = principal.getName();
         int count = 0;
 
@@ -184,14 +185,59 @@ public class PostService {
                             PageRequest.of((offset / limit), limit));
                     break;
                 }
-            default: postsCollection = new ArrayList<>();
+            default:
+                postsCollection = new ArrayList<>();
         }
+
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
         postsCollection.forEach(p -> {
             postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
         });
         return new PostsResponse(count, postsResponseDtoList);
 
+    }
+
+    public PostsResponse getModerationPosts(
+            final Integer offset, final Integer limit, final String status, final Principal principal) {
+        String email = principal.getName();
+        int count = 0;
+
+        List<Post> postsCollection;
+        switch (status) {
+            case ("new"):
+                count = postRepository.countAllNewPosts();
+                if (count == 0) {
+                    return new PostsResponse(0, new ArrayList<>());
+                } else {
+                    postsCollection = postRepository.findAllNewPosts(PageRequest.of((offset / limit), limit));
+                    break;
+                }
+            case ("declined"):
+                count = postRepository.countDeclinedPostsByMe(email);
+                if (count == 0) {
+                    return new PostsResponse(0, new ArrayList<>());
+                } else {
+                    postsCollection = postRepository
+                            .findDeclinedPostsByMe(email, PageRequest.of((offset / limit), limit));
+                    break;
+                }
+            case ("accepted"):
+                count = postRepository.countAcceptedPostsByMe(email);
+                if (count == 0) {
+                    return new PostsResponse(0, new ArrayList<>());
+                } else {
+                    postsCollection = postRepository
+                            .findAcceptedPostsByMe(email, PageRequest.of((offset / limit), limit));
+                    break;
+                }
+            default:
+                postsCollection = new ArrayList<>();
+        }
+        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+        postsCollection.forEach(p -> {
+            postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+        });
+        return new PostsResponse(count, postsResponseDtoList);
     }
 
     private Collection<Post> getTimeModePostCollection(final PostRepository repository, final Pageable pageable) {
