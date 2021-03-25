@@ -9,25 +9,23 @@ import main.dto.CommentsResponseUserDto;
 import main.dto.PostsResponseDto;
 import main.dto.PostsResponseUserDto;
 import main.model.*;
-import main.repository.PostCommentRepository;
-import main.repository.PostRepository;
-import main.repository.PostVotesRepository;
-import main.repository.UserRepository;
+import main.repository.*;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -46,17 +44,20 @@ public class PostService {
     private final PostVotesRepository postVotesRepository;
     private final PostCommentRepository postCommentRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
 
 
     @Autowired
     public PostService(final PostRepository postRepository,
                        final PostVotesRepository postVotesRepository,
                        final PostCommentRepository postCommentRepository,
-                       final UserRepository userRepository) {
+                       final UserRepository userRepository,
+                       final TagRepository tagRepository) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
         this.postCommentRepository = postCommentRepository;
         this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
     }
 
     public PostsResponse getPostsResponse(final Integer offset, final Integer limit, String mode) {
@@ -375,7 +376,12 @@ public class PostService {
         post.setText(postRequest.getText());
 
         List<String> tags = postRequest.getTags();
+
         if (tags.size() > 0) {
+
+            tags.forEach(t ->{
+                tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
+            });
             post.setTags(getTags(tags));
         }
 

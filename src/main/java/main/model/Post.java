@@ -46,10 +46,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostVote> postVotes;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "tag2post",
-            joinColumns = {@JoinColumn(name = "post_id")},
-            inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+            joinColumns = {@JoinColumn(name = "post_id", insertable = false, updatable = false, nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id", insertable = false, updatable = false, nullable = false)})
     private List<Tag> tags;
-
 }
