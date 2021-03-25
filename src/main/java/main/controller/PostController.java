@@ -1,18 +1,22 @@
 package main.controller;
 
 import main.api.request.PostRequest;
+import main.api.response.ImageLoadResponse;
 import main.api.response.PostByIdResponse;
-import main.api.response.PostCreationResponse;
-import main.api.response.PostsResponse;
+import main.api.response.PostProcessingResponse;
+import main.service.FileService;
 import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -21,10 +25,12 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
+    private final FileService fileService;
 
     @Autowired
-    public PostController(final PostService postService) {
+    public PostController(final PostService postService, final FileService fileService) {
         this.postService = postService;
+        this.fileService = fileService;
     }
 
     @GetMapping(value = "/post")
@@ -93,5 +99,23 @@ public class PostController {
     public ResponseEntity createPost(@RequestBody final PostRequest postRequest, final Principal principal) {
         return new ResponseEntity(postService.createPost(postRequest, principal), HttpStatus.OK);
     }
+
+//    @PutMapping(value ="/post/{ID}")
+//    public ResponseEntity editPostById (@PathVariable final int id, @RequestBody PostRequest postRequest){
+//
+//    }
+
+    @PostMapping(value = "/image")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity loadImage(@RequestParam("image") final MultipartFile file) {
+        ImageLoadResponse imageLoadResponse = fileService.loadImage(file);
+
+        if (imageLoadResponse.isResult()) {
+            return ResponseEntity.status(HttpStatus.OK).body(imageLoadResponse.getPath());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(imageLoadResponse);
+        }
+    }
+
 
 }

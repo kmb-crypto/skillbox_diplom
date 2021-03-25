@@ -10,13 +10,13 @@ import java.util.HashMap;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCreationResponse {
+public class PostProcessingResponse {
     private boolean result;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private HashMap<String, String> errors;
 
-    public PostCreationResponse(boolean result) {
+    public PostProcessingResponse(boolean result) {
         this.result = result;
     }
 }

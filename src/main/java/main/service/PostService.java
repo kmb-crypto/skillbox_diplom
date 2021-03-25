@@ -2,7 +2,7 @@ package main.service;
 
 import main.api.request.PostRequest;
 import main.api.response.PostByIdResponse;
-import main.api.response.PostCreationResponse;
+import main.api.response.PostProcessingResponse;
 import main.api.response.PostsResponse;
 import main.dto.CommentsResponseDto;
 import main.dto.CommentsResponseUserDto;
@@ -253,13 +253,13 @@ public class PostService {
         return new PostsResponse(count, postsResponseDtoList);
     }
 
-    public PostCreationResponse createPost(final PostRequest postRequest, final Principal principal) {
+    public PostProcessingResponse createPost(final PostRequest postRequest, final Principal principal) {
         HashMap<String, String> errors = checkPostRequest(postRequest);
         if (errors != null) {
-            return new PostCreationResponse(false, errors);
+            return new PostProcessingResponse(false, errors);
         } else {
             addNewPost(postRequest, principal);
-            return new PostCreationResponse(true);
+            return new PostProcessingResponse(true);
         }
     }
 
@@ -382,7 +382,8 @@ public class PostService {
             tags.forEach(t ->{
                 tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
             });
-            post.setTags(getTags(tags));
+            //TODO tag problem
+            //post.setTags(getTags(tags));
         }
 
         postRepository.save(post);
