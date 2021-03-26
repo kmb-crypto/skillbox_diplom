@@ -4,7 +4,6 @@ import main.api.response.ImageLoadResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,10 +32,10 @@ public class FileService {
     }
 
     private ImageLoadResponse saveImage(final MultipartFile file, String fileExtension) {
-        Path path = Paths.get("/upload/image." + fileExtension);
+        Path path = Paths.get("./upload/image." + fileExtension);
 
         try {
-            Files.createDirectory(Path.of("/upload"));
+            Files.createDirectory(Path.of("./upload"));
             file.transferTo(path);
             return new ImageLoadResponse(path.toString(), true);
         } catch (IOException e) {

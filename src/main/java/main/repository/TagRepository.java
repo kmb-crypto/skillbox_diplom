@@ -20,7 +20,7 @@ public interface TagRepository extends CrudRepository<Tag, Integer> {
             "FROM tags " +
             "JOIN tag2post ON tag2post.tag_id = tags.id " +
             "JOIN posts ON posts.id = tag2post.post_id " +
-            "WHERE posts.is_active = 1 " +
+            "WHERE posts.is_active = 1 AND time < now() AND moderation_status = 'ACCEPTED' " +
             "GROUP BY tags.id", nativeQuery = true)
     List<TagNative> getTagsWithWeights();
 
@@ -31,7 +31,7 @@ public interface TagRepository extends CrudRepository<Tag, Integer> {
             "FROM tags " +
             "JOIN tag2post ON tag2post.tag_id = tags.id " +
             "JOIN posts ON posts.id = tag2post.post_id " +
-            "WHERE posts.is_active = 1 AND tags.name LIKE %:query% " +
+            "WHERE posts.is_active = 1 AND AND time < now() AND moderation_status = 'ACCEPTED' AND tags.name LIKE %:query% " +
             "GROUP BY tags.id", nativeQuery = true)
     List<TagNative> getQueryTagsWithWeights(@Param("query") String query);
 

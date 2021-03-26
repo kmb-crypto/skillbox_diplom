@@ -100,10 +100,12 @@ public class PostController {
         return new ResponseEntity(postService.createPost(postRequest, principal), HttpStatus.OK);
     }
 
-//    @PutMapping(value ="/post/{ID}")
-//    public ResponseEntity editPostById (@PathVariable final int id, @RequestBody PostRequest postRequest){
-//
-//    }
+    @PutMapping(value = "/post/{id}")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity editPostById(@PathVariable final int id, @RequestBody final PostRequest postRequest,
+                                       final Principal principal) {
+        return new ResponseEntity(postService.editPost(id, postRequest, principal), HttpStatus.OK);
+    }
 
     @PostMapping(value = "/image")
     @PreAuthorize("hasAuthority('user:write')")

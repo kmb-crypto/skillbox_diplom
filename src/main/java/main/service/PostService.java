@@ -263,11 +263,23 @@ public class PostService {
         }
     }
 
+    public PostProcessingResponse editPost(final int id, final PostRequest postRequest, final Principal principal) {
+        HashMap<String, String> errors = checkPostRequest(postRequest);
+        if (errors != null) {
+            return new PostProcessingResponse(false, errors);
+        } else {
+            Post editablePost = postRepository.findPostById(id);
+            setEditablePost(editablePost, postRequest, principal);
+            return new PostProcessingResponse(true);
+        }
+
+    }
+
     // PRIVATE PART ---------------------------------------------------------------------------------------------------
+
     private Collection<Post> getTimeModePostCollection(final PostRepository repository, final Pageable pageable) {
         return repository.findAllPosts(pageable);
     }
-
 
     private PostsResponseDto postEntityToResponse(final Post post,
                                                   final PostVotesRepository postVotesRepository,
@@ -369,6 +381,7 @@ public class PostService {
         Post post = new Post();
         post.setIsActive(postRequest.getActive());
         post.setModerationStatus(ModerationStatus.NEW);
+
         post.setUser(userRepository.findByEmail(principal.getName()).get());
         post.setTime(checkTimestamp(postRequest.getTimestamp()));
 
@@ -379,7 +392,33 @@ public class PostService {
 
         if (tags.size() > 0) {
 
-            tags.forEach(t ->{
+            tags.forEach(t -> {
+                tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
+            });
+            post.setTags(tagRepository.findTagsIdByNameIn(tags));
+        }
+
+        postRepository.save(post);
+
+    }
+
+    private void setEditablePost(final Post post, final PostRequest postRequest, final Principal principal) {
+        post.setIsActive(postRequest.getActive());
+        User currentUser = userRepository.findByEmail(principal.getName()).get();
+        if (currentUser.getIsModerator() == 0) {
+            post.setModerationStatus(ModerationStatus.NEW);
+            post.setModeratorId(null);
+        } else {
+            post.setModeratorId(currentUser.getId());
+        }
+        post.setTime(checkTimestamp(postRequest.getTimestamp()));
+        post.setTitle(postRequest.getTitle());
+        post.setText(postRequest.getText());
+        List<String> tags = postRequest.getTags();
+
+        if (tags.size() > 0) {
+
+            tags.forEach(t -> {
                 tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
             });
             post.setTags(tagRepository.findTagsIdByNameIn(tags));
