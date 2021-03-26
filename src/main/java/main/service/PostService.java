@@ -1,7 +1,9 @@
 package main.service;
 
+import main.api.request.CommentRequest;
 import main.api.request.PostRequest;
 import main.api.response.PostByIdResponse;
+import main.api.response.CommentResponse;
 import main.api.response.PostProcessingResponse;
 import main.api.response.PostsResponse;
 import main.dto.CommentsResponseDto;
@@ -42,7 +44,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostVotesRepository postVotesRepository;
-    private final PostCommentRepository postCommentRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
 
@@ -50,17 +52,17 @@ public class PostService {
     @Autowired
     public PostService(final PostRepository postRepository,
                        final PostVotesRepository postVotesRepository,
-                       final PostCommentRepository postCommentRepository,
+                       final CommentRepository commentRepository,
                        final UserRepository userRepository,
                        final TagRepository tagRepository) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
-        this.postCommentRepository = postCommentRepository;
+        this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
     }
 
-    public PostsResponse getPostsResponse(final Integer offset, final Integer limit, String mode) {
+    public PostsResponse getPostsResponse(final Integer offset, final Integer limit, final String mode) {
         int count = postRepository.countAllAvailablePosts();
         if (count == 0) {
             return new PostsResponse(count, new ArrayList<>());
@@ -76,17 +78,15 @@ public class PostService {
                     postsCollection = postRepository.findPopularPosts(PageRequest.of((offset / limit), limit));
                     break;
                 case "recent":
-                    postsCollection = getTimeModePostCollection(postRepository,
-                            PageRequest.of((offset / limit),
-                                    limit, Sort.by(Sort.Direction.DESC, "time")));
+                    postsCollection = getTimeModePostCollection(PageRequest.of((offset / limit),
+                            limit, Sort.by(Sort.Direction.DESC, "time")));
                     break;
                 case "early":
-                    postsCollection = getTimeModePostCollection(postRepository,
-                            PageRequest.of((offset / limit),
-                                    limit, Sort.by(Sort.Direction.ASC, "time")));
+                    postsCollection = getTimeModePostCollection(PageRequest.of((offset / limit),
+                            limit, Sort.by(Sort.Direction.ASC, "time")));
             }
             postsCollection.forEach(p -> {
-                postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+                postsResponseDtoList.add(postEntityToResponse(p));
             });
             return new PostsResponse(count, postsResponseDtoList);
         }
@@ -103,7 +103,7 @@ public class PostService {
             postsCollection = postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit));
 
             postsCollection.forEach(p -> {
-                postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+                postsResponseDtoList.add(postEntityToResponse(p));
             });
             return new PostsResponse(count, postsResponseDtoList);
         }
@@ -123,7 +123,7 @@ public class PostService {
 
                 postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
                 postsCollection.forEach(p -> {
-                    postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+                    postsResponseDtoList.add(postEntityToResponse(p));
                 });
 
                 return new PostsResponse(count, postsResponseDtoList);
@@ -137,7 +137,7 @@ public class PostService {
 
         postsCollection = postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit));
         postsCollection.forEach(p -> {
-            postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+            postsResponseDtoList.add(postEntityToResponse(p));
         });
         return new PostsResponse(postRepository.countAllAvailablePostsByTag(tag), postsResponseDtoList);
 
@@ -204,7 +204,7 @@ public class PostService {
 
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
         postsCollection.forEach(p -> {
-            postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+            postsResponseDtoList.add(postEntityToResponse(p));
         });
         return new PostsResponse(count, postsResponseDtoList);
 
@@ -248,7 +248,7 @@ public class PostService {
         }
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
         postsCollection.forEach(p -> {
-            postsResponseDtoList.add(postEntityToResponse(p, postVotesRepository, postCommentRepository));
+            postsResponseDtoList.add(postEntityToResponse(p));
         });
         return new PostsResponse(count, postsResponseDtoList);
     }
@@ -275,15 +275,37 @@ public class PostService {
 
     }
 
-    // PRIVATE PART ---------------------------------------------------------------------------------------------------
+    public CommentResponse addComment(final CommentRequest commentRequest, final Principal principal) {
+        Integer parentId = commentRequest.getParentId();
+        Post currentPost = postRepository.findPostById(commentRequest.getPostId());
 
-    private Collection<Post> getTimeModePostCollection(final PostRepository repository, final Pageable pageable) {
-        return repository.findAllPosts(pageable);
+        if (parentId == null && currentPost == null) {
+            return new CommentResponse(false);
+        }
+
+        if (parentId != null && (commentRepository.findPostCommentById(parentId) == null || currentPost == null)) {
+            return new CommentResponse(false);
+        }
+
+        String text = commentRequest.getText();
+
+        if (text.length() < 2) {
+            HashMap<String, String> errors = new HashMap<>();
+            errors.put("text", "Текст не задан или слишком короткий");
+            return new CommentResponse(false, errors);
+        }
+
+        return new CommentResponse(true, saveComment(text, parentId, currentPost, principal));
+
     }
 
-    private PostsResponseDto postEntityToResponse(final Post post,
-                                                  final PostVotesRepository postVotesRepository,
-                                                  final PostCommentRepository postCommentRepository) {
+    // PRIVATE PART ---------------------------------------------------------------------------------------------------
+
+    private Collection<Post> getTimeModePostCollection(final Pageable pageable) {
+        return postRepository.findAllPosts(pageable);
+    }
+
+    private PostsResponseDto postEntityToResponse(final Post post) {
         int postId = post.getId();
         PostsResponseDto postsResponseDto = new PostsResponseDto();
         postsResponseDto.setId(postId);
@@ -292,7 +314,7 @@ public class PostService {
         postsResponseDto.setAnnounce(createAnnounce(post.getText()));
         postsResponseDto.setLikeCount(postVotesRepository.countLikes(postId));
         postsResponseDto.setDislikeCount(postVotesRepository.countDislikes(postId));
-        postsResponseDto.setCommentCount(postCommentRepository.countComments(postId));
+        postsResponseDto.setCommentCount(commentRepository.countComments(postId));
         postsResponseDto.setViewCount(post.getViewCount());
         User user = post.getUser();
         postsResponseDto.setUserDto(new PostsResponseUserDto(user.getId(), user.getName()));
@@ -349,7 +371,6 @@ public class PostService {
         postByIdResponse.setTags(tagResponse);
 
         return postByIdResponse;
-
     }
 
     private String createAnnounce(final String text) {
@@ -381,10 +402,8 @@ public class PostService {
         Post post = new Post();
         post.setIsActive(postRequest.getActive());
         post.setModerationStatus(ModerationStatus.NEW);
-
         post.setUser(userRepository.findByEmail(principal.getName()).get());
         post.setTime(checkTimestamp(postRequest.getTimestamp()));
-
         post.setTitle(postRequest.getTitle());
         post.setText(postRequest.getText());
 
@@ -399,7 +418,6 @@ public class PostService {
         }
 
         postRepository.save(post);
-
     }
 
     private void setEditablePost(final Post post, final PostRequest postRequest, final Principal principal) {
@@ -425,10 +443,9 @@ public class PostService {
         }
 
         postRepository.save(post);
-
     }
 
-    private Timestamp checkTimestamp(long time) {
+    private Timestamp checkTimestamp(final long time) {
         Instant instant = Instant.ofEpochSecond(time);
         Instant now = Instant.now();
         if (instant.isBefore(now)) {
@@ -438,10 +455,22 @@ public class PostService {
         }
     }
 
-    private List<Tag> getTags(List<String> tags) {
+    private List<Tag> getTags(final List<String> tags) {
         List<Tag> postTags = new ArrayList<>();
         tags.forEach(t -> postTags.add(new Tag(t.toLowerCase())));
         return postTags;
+    }
+
+    private int saveComment(final String text, final Integer parentId, final Post post, final Principal principal) {
+        PostComment postComment = new PostComment();
+
+        postComment.setParentId(parentId);
+        postComment.setPost(post);
+        postComment.setUser(userRepository.findByEmail(principal.getName()).get());
+        postComment.setTime(new Timestamp(System.currentTimeMillis()));
+        postComment.setText(text);
+        commentRepository.save(postComment);
+        return postComment.getId();
     }
 
 }

@@ -1,9 +1,8 @@
 package main.controller;
 
+import main.api.request.CommentRequest;
 import main.api.request.PostRequest;
-import main.api.response.ImageLoadResponse;
-import main.api.response.PostByIdResponse;
-import main.api.response.PostProcessingResponse;
+import main.api.response.*;
 import main.service.FileService;
 import main.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -117,6 +113,23 @@ public class PostController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(imageLoadResponse);
         }
+    }
+
+    @PostMapping(value = "/comment")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity createComment(@RequestBody final CommentRequest commentRequest, final Principal principal) {
+        CommentResponse commentResponse = postService.addComment(commentRequest, principal);
+        System.out.println(commentResponse);
+        if (!commentResponse.isResult() && commentResponse.getErrors() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorMessageResponse("ошибочный parent_id или post_id"));
+        }
+
+        if (!commentResponse.isResult()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentResponse);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new CommentIdResponse(commentResponse.getId()));
     }
 
 

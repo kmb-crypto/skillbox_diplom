@@ -105,7 +105,7 @@ public class AuthService {
 
         if (result) {
 
-            addNewUser(userRepository, registerUserRequest);
+            addNewUser(registerUserRequest);
             return new AuthRegisterResponse(result);
 
         } else {
@@ -115,14 +115,10 @@ public class AuthService {
 
     private boolean checkName(final String name) {
 
-        if (name.replaceAll("[a-zа-яёA-ZА-ЯЁ\\s]+", "").equals("")) {
-            return true;
-        } else {
-            return false;
-        }
+        return name.replaceAll("[a-zа-яёA-ZА-ЯЁ\\s]+", "").equals("");
     }
 
-    private void addNewUser(final UserRepository userRepository, final RegisterUserRequest registerUserRequest) {
+    private void addNewUser(final RegisterUserRequest registerUserRequest) {
         User user = new User();
         user.setEmail(registerUserRequest.getEmail());
         user.setName(registerUserRequest.getName());
