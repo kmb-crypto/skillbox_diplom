@@ -382,8 +382,7 @@ public class PostService {
             tags.forEach(t ->{
                 tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
             });
-            //TODO tag problem
-            //post.setTags(getTags(tags));
+            post.setTags(tagRepository.findTagsIdByNameIn(tags));
         }
 
         postRepository.save(post);

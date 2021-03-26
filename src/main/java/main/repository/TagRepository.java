@@ -35,6 +35,8 @@ public interface TagRepository extends CrudRepository<Tag, Integer> {
             "GROUP BY tags.id", nativeQuery = true)
     List<TagNative> getQueryTagsWithWeights(@Param("query") String query);
 
+    List<Tag> findTagsIdByNameIn (List<String> tags);
+
     @Transactional
     @Modifying
     @Query(value = "INSERT IGNORE INTO tags(name) VALUES (?1)", nativeQuery = true)
