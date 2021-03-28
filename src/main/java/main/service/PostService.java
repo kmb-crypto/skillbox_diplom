@@ -85,9 +85,7 @@ public class PostService {
                     postsCollection = getTimeModePostCollection(PageRequest.of((offset / limit),
                             limit, Sort.by(Sort.Direction.ASC, "time")));
             }
-            postsCollection.forEach(p -> {
-                postsResponseDtoList.add(postEntityToResponse(p));
-            });
+            postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
             return new PostsResponse(count, postsResponseDtoList);
         }
     }
@@ -102,9 +100,7 @@ public class PostService {
 
             postsCollection = postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit));
 
-            postsCollection.forEach(p -> {
-                postsResponseDtoList.add(postEntityToResponse(p));
-            });
+            postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
             return new PostsResponse(count, postsResponseDtoList);
         }
     }
@@ -122,9 +118,7 @@ public class PostService {
                 Collection<Post> postsCollection;
 
                 postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
-                postsCollection.forEach(p -> {
-                    postsResponseDtoList.add(postEntityToResponse(p));
-                });
+                postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
 
                 return new PostsResponse(count, postsResponseDtoList);
             }
@@ -136,9 +130,7 @@ public class PostService {
         Collection<Post> postsCollection;
 
         postsCollection = postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit));
-        postsCollection.forEach(p -> {
-            postsResponseDtoList.add(postEntityToResponse(p));
-        });
+        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
         return new PostsResponse(postRepository.countAllAvailablePostsByTag(tag), postsResponseDtoList);
 
     }
@@ -203,9 +195,7 @@ public class PostService {
         }
 
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-        postsCollection.forEach(p -> {
-            postsResponseDtoList.add(postEntityToResponse(p));
-        });
+        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
         return new PostsResponse(count, postsResponseDtoList);
 
     }
@@ -247,9 +237,7 @@ public class PostService {
                 postsCollection = new ArrayList<>();
         }
         List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-        postsCollection.forEach(p -> {
-            postsResponseDtoList.add(postEntityToResponse(p));
-        });
+        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
         return new PostsResponse(count, postsResponseDtoList);
     }
 
@@ -279,24 +267,35 @@ public class PostService {
         Integer parentId = commentRequest.getParentId();
         Post currentPost = postRepository.findPostById(commentRequest.getPostId());
 
+        HashMap<String, String> errors = new HashMap<>();
+
         if (parentId == null && currentPost == null) {
-            return new CommentResponse(false);
+            errors.put("text", "Неверный post_id");
+            return new CommentResponse(false, errors);
         }
 
-        if (parentId != null && (commentRepository.findPostCommentById(parentId) == null || currentPost == null)) {
-            return new CommentResponse(false);
+        if (parentId != null) {
+            PostComment parentComment = commentRepository.findPostCommentById(parentId);
+            if (currentPost == null && parentComment == null) {
+                errors.put("text", "Неверный post_id и parent_id");
+                return new CommentResponse(false, errors);
+            } else if (parentComment == null) {
+                errors.put("text", "Неверный parent_id");
+                return new CommentResponse(false, errors);
+            } else if (currentPost == null){
+                errors.put("text", "Неверный post_id");
+                return new CommentResponse(false, errors);
+            }
         }
 
         String text = commentRequest.getText();
 
         if (text.length() < 2) {
-            HashMap<String, String> errors = new HashMap<>();
             errors.put("text", "Текст не задан или слишком короткий");
             return new CommentResponse(false, errors);
         }
 
-        return new CommentResponse(true, saveComment(text, parentId, currentPost, principal));
-
+        return new CommentResponse(saveComment(text, parentId, currentPost, principal));
     }
 
     // PRIVATE PART ---------------------------------------------------------------------------------------------------
@@ -411,9 +410,7 @@ public class PostService {
 
         if (tags.size() > 0) {
 
-            tags.forEach(t -> {
-                tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
-            });
+            tags.forEach(t -> tagRepository.saveIgnoreDuplicateKey(t.toLowerCase()));
             post.setTags(tagRepository.findTagsIdByNameIn(tags));
         }
 
@@ -436,9 +433,7 @@ public class PostService {
 
         if (tags.size() > 0) {
 
-            tags.forEach(t -> {
-                tagRepository.saveIgnoreDuplicateKey(t.toLowerCase());
-            });
+            tags.forEach(t -> tagRepository.saveIgnoreDuplicateKey(t.toLowerCase()));
             post.setTags(tagRepository.findTagsIdByNameIn(tags));
         }
 
@@ -461,7 +456,7 @@ public class PostService {
         return postTags;
     }
 
-    private int saveComment(final String text, final Integer parentId, final Post post, final Principal principal) {
+    private Integer saveComment(final String text, final Integer parentId, final Post post, final Principal principal) {
         PostComment postComment = new PostComment();
 
         postComment.setParentId(parentId);

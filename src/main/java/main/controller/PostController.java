@@ -21,12 +21,10 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-    private final FileService fileService;
 
     @Autowired
-    public PostController(final PostService postService, final FileService fileService) {
+    public PostController(final PostService postService) {
         this.postService = postService;
-        this.fileService = fileService;
     }
 
     @GetMapping(value = "/post")
@@ -102,35 +100,5 @@ public class PostController {
                                        final Principal principal) {
         return new ResponseEntity(postService.editPost(id, postRequest, principal), HttpStatus.OK);
     }
-
-    @PostMapping(value = "/image")
-    @PreAuthorize("hasAuthority('user:write')")
-    public ResponseEntity loadImage(@RequestParam("image") final MultipartFile file) {
-        ImageLoadResponse imageLoadResponse = fileService.loadImage(file);
-
-        if (imageLoadResponse.isResult()) {
-            return ResponseEntity.status(HttpStatus.OK).body(imageLoadResponse.getPath());
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(imageLoadResponse);
-        }
-    }
-
-    @PostMapping(value = "/comment")
-    @PreAuthorize("hasAuthority('user:write')")
-    public ResponseEntity createComment(@RequestBody final CommentRequest commentRequest, final Principal principal) {
-        CommentResponse commentResponse = postService.addComment(commentRequest, principal);
-        System.out.println(commentResponse);
-        if (!commentResponse.isResult() && commentResponse.getErrors() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorMessageResponse("ошибочный parent_id или post_id"));
-        }
-
-        if (!commentResponse.isResult()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentResponse);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(new CommentIdResponse(commentResponse.getId()));
-    }
-
 
 }

@@ -12,13 +12,13 @@ public class CommentResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer id;
 
-    private boolean result;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean result;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private HashMap<String, String> errors;
 
-    public CommentResponse(boolean result, Integer id) {
-        this.result = result;
+    public CommentResponse(Integer id) {
         this.id = id;
     }
 
@@ -27,7 +27,4 @@ public class CommentResponse {
         this.errors = errors;
     }
 
-    public CommentResponse(boolean result) {
-        this.result = result;
-    }
 }
