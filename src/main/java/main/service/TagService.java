@@ -1,8 +1,8 @@
 package main.service;
 
 import main.api.response.TagsResponse;
-import main.dto.TagResponseDto;
 import main.dto.TagNative;
+import main.dto.TagResponseDto;
 import main.repository.PostRepository;
 import main.repository.Tag2PostRepository;
 import main.repository.TagRepository;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Service
@@ -63,4 +64,10 @@ public class TagService {
         return tagResponseDtoList;
     }
 
+    public void removeOrphanTags() {
+        if (tagRepository.deleteOrphanTags() > 0) {
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            System.out.println("Orphan tags deleted : " + gregorianCalendar.getTime());
+        }
+    }
 }

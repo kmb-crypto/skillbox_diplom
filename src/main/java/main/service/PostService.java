@@ -48,18 +48,22 @@ public class PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
 
+    private final TagService tagService;
+
 
     @Autowired
     public PostService(final PostRepository postRepository,
                        final PostVotesRepository postVotesRepository,
                        final CommentRepository commentRepository,
                        final UserRepository userRepository,
-                       final TagRepository tagRepository) {
+                       final TagRepository tagRepository,
+                       final TagService tagService) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
+        this.tagService = tagService;
     }
 
     public PostsResponse getPostsResponse(final Integer offset, final Integer limit, final String mode) {
@@ -258,6 +262,7 @@ public class PostService {
         } else {
             Post editablePost = postRepository.findPostById(id);
             setEditablePost(editablePost, postRequest, principal);
+            tagService.removeOrphanTags();
             return new PostProcessingResponse(true);
         }
 
@@ -282,7 +287,7 @@ public class PostService {
             } else if (parentComment == null) {
                 errors.put("text", "Неверный parent_id");
                 return new CommentResponse(false, errors);
-            } else if (currentPost == null){
+            } else if (currentPost == null) {
                 errors.put("text", "Неверный post_id");
                 return new CommentResponse(false, errors);
             }
@@ -435,7 +440,7 @@ public class PostService {
 
             tags.forEach(t -> tagRepository.saveIgnoreDuplicateKey(t.toLowerCase()));
             post.setTags(tagRepository.findTagsIdByNameIn(tags));
-        }
+        } else post.setTags(new ArrayList<>());
 
         postRepository.save(post);
     }

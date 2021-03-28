@@ -62,7 +62,6 @@ public class CaptchaService {
             e.printStackTrace();
         }
         return baos.toByteArray();
-
     }
 
     @Scheduled(fixedDelay = OLD_CAPTCHA_CHECH_SHEDULE)
