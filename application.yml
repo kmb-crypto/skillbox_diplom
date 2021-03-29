@@ -23,6 +23,8 @@ mode.popular: popular
 mode.best: best
 mode.early: early
 
+upload.path: ./upload
+
 
 
 

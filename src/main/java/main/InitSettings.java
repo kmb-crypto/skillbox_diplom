@@ -4,9 +4,15 @@ import lombok.Getter;
 import main.model.GlobalSetting;
 import main.repository.GlobalSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLOutput;
 
 @Component
 public class InitSettings {
@@ -27,6 +33,9 @@ public class InitSettings {
 
     @Getter
     private static final String NO = "NO";
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @Autowired
     private GlobalSettingsRepository globalSettingsRepository;
@@ -61,6 +70,17 @@ public class InitSettings {
             System.out.println("Global settings ok");
         }
 
+        Path uploadImagePath = Paths.get(uploadPath);
+        if (!Files.exists(uploadImagePath)) {
+            try {
+                Files.createDirectory(uploadImagePath);
+                System.out.println("Upload image folder created");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Can't create upload image folder");
+            }
+        }
     }
+
 
 }
