@@ -27,8 +27,8 @@ public class FileController {
         ImageLoadResponse imageLoadResponse = fileService.loadImage(file);
 
         if (imageLoadResponse.isResult()) {
-            return ResponseEntity.status(HttpStatus.OK).body("http://localhost:8080/upload/image.jpeg");
-        //    return ResponseEntity.status(HttpStatus.OK).body(imageLoadResponse.getPath());
+
+            return ResponseEntity.status(HttpStatus.OK).body(imageLoadResponse.getPath());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(imageLoadResponse);
         }

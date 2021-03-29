@@ -70,7 +70,7 @@ public class InitSettings {
             System.out.println("Global settings ok");
         }
 
-        Path uploadImagePath = Paths.get(uploadPath);
+        Path uploadImagePath = Paths.get(uploadPath).toAbsolutePath();
         if (!Files.exists(uploadImagePath)) {
             try {
                 Files.createDirectory(uploadImagePath);

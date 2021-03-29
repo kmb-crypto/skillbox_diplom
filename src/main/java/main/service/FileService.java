@@ -2,10 +2,12 @@ package main.service;
 
 import main.api.response.ImageLoadResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @Service
 public class FileService {
+    private final Environment environment;
+
     private static final String JPEG_TYPE = "image/jpeg";
     private static final String PNG_TYPE = "image/png";
     private static final String JPEG_EXT = "jpeg";
@@ -22,6 +26,10 @@ public class FileService {
 
     @Value("${upload.path}")
     private String uploadPath;
+
+    public FileService(final Environment environment) {
+        this.environment = environment;
+    }
 
     public ImageLoadResponse loadImage(final MultipartFile file) {
         String contentType = file.getContentType();
@@ -56,7 +64,11 @@ public class FileService {
             createDir(Paths.get(currentUploadPath2));
             createDir(Paths.get(currentUploadPath3));
             file.transferTo(filePath);
-            return new ImageLoadResponse(filePath.toString(), true);
+
+            String responsePath = InetAddress.getLoopbackAddress().getHostName() + ":"
+                    + environment.getProperty("local.server.port") +
+                    "/" + filePath.toString().replace("\\", "/");
+            return new ImageLoadResponse(responsePath, true);
         } catch (IOException e) {
             e.printStackTrace();
             HashMap<String, String> errors = new HashMap<>();
