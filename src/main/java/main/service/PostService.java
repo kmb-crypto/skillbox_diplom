@@ -294,7 +294,7 @@ public class PostService {
         }
 
         String text = commentRequest.getText();
-
+        System.out.println("text: "+text);
         if (text.length() < 2) {
             errors.put("text", "Текст не задан или слишком короткий");
             return new CommentResponse(false, errors);
