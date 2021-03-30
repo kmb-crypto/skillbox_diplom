@@ -137,17 +137,21 @@ public class PostService {
 
     }
 
-    public PostByIdResponse getPostById(final int id) {
-
+    public PostByIdResponse getPostById(final int id, Principal principal) {
         Post post = postRepository.findPostById(id);
 
         if (post == null) {
             return null;
-        } else {
-            postRepository.updateViewCount(id);
-            return postEntityToResponseById(post, id);
+        } else if (principal != null) {
+            User currentUser = userRepository.findByEmail(principal.getName()).get();
+            if (currentUser.getIsModerator() == 1 || currentUser == post.getUser()) {
+                return postEntityToResponseById(post, id);
+            }
         }
+        postRepository.updateViewCount(id);
+        return postEntityToResponseById(post, id);
     }
+
 
     public PostsResponse getMyPosts(
             final Integer offset, final Integer limit, final String status, final Principal principal) {
@@ -415,8 +419,9 @@ public class PostService {
 
             tags.forEach(t -> tagRepository.saveIgnoreDuplicateKey(t.toLowerCase()));
             post.setTags(tagRepository.findTagsIdByNameIn(tags));
-        } else post.setTags(new ArrayList<>());
-
+        } else {
+            post.setTags(new ArrayList<>());
+        }
         postRepository.save(post);
     }
 
@@ -440,8 +445,8 @@ public class PostService {
                                                     final Post post,
                                                     final Principal principal) {
         post.setModeratorId(userRepository.findByEmail(principal.getName()).get().getId());
-        post.setModerationStatus(moderationRequest.getDecision().equals("accept") ?
-                ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
+        post.setModerationStatus(moderationRequest
+                .getDecision().equals("accept") ? ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
         postRepository.save(post);
         return new ModerationResponse(true);
     }

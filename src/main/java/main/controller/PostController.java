@@ -57,9 +57,9 @@ public class PostController {
     }
 
     @GetMapping(value = "/post/{id}")
-    public ResponseEntity getPostById(@PathVariable final int id) {
+    public ResponseEntity getPostById(@PathVariable final int id, final Principal principal) {
 
-        Optional<PostByIdResponse> optionalPostByIdResponse = Optional.ofNullable(postService.getPostById(id));
+        Optional<PostByIdResponse> optionalPostByIdResponse = Optional.ofNullable(postService.getPostById(id, principal));
         if (optionalPostByIdResponse.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } else {
