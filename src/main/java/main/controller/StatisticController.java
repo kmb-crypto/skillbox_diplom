@@ -22,7 +22,13 @@ public class StatisticController {
 
     @GetMapping(value = "/statistics/my")
     @PreAuthorize("hasAuthority('user:write')")
-    public ResponseEntity getStatistic(final Principal principal) {
+    public ResponseEntity getMyStatistic(final Principal principal) {
         return new ResponseEntity(statisticService.getStatisticResponse(principal), HttpStatus.OK);
     }
+
+//    @GetMapping(value = "/statistics/all")
+//    @PreAuthorize("hasAuthority('user:moderate')")
+//    public ResponseEntity getAllStatistic(){
+//        return
+//    }
 }
