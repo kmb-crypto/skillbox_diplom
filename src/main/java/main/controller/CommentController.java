@@ -2,7 +2,7 @@ package main.controller;
 
 import main.api.request.CommentRequest;
 import main.api.response.CommentResponse;
-import main.service.PostService;
+import main.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,16 +17,16 @@ import java.security.Principal;
 @RequestMapping("/api")
 public class CommentController {
 
-    private final PostService postService;
+    private final CommentService commentService;
 
-    public CommentController(final PostService postService) {
-        this.postService = postService;
+    public CommentController(final CommentService commentService) {
+        this.commentService = commentService;
     }
 
     @PostMapping(value = "/comment")
     @PreAuthorize("hasAuthority('user:write')")
     public ResponseEntity createComment(@RequestBody final CommentRequest commentRequest, final Principal principal) {
-        CommentResponse commentResponse = postService.addComment(commentRequest, principal);
+        CommentResponse commentResponse = commentService.addComment(commentRequest, principal);
 
         if (commentResponse.getResult() != null && !commentResponse.getResult()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentResponse);

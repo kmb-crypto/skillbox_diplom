@@ -1,5 +1,6 @@
 package main.controller;
 
+import main.api.request.ModerationRequest;
 import main.api.request.PostRequest;
 import main.api.response.PostByIdResponse;
 import main.service.PostService;
@@ -96,6 +97,13 @@ public class PostController {
     public ResponseEntity editPostById(@PathVariable final int id, @RequestBody final PostRequest postRequest,
                                        final Principal principal) {
         return new ResponseEntity(postService.editPost(id, postRequest, principal), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/moderation")
+    @PreAuthorize("hasAuthority('user:moderate')")
+    public ResponseEntity moderatePost(@RequestBody final ModerationRequest moderationRequest,
+                                       final Principal principal) {
+        return new ResponseEntity(postService.setModerationStatus(moderationRequest, principal), HttpStatus.OK);
     }
 
 }

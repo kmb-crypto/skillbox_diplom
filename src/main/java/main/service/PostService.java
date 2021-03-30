@@ -1,11 +1,9 @@
 package main.service;
 
 import main.api.request.CommentRequest;
+import main.api.request.ModerationRequest;
 import main.api.request.PostRequest;
-import main.api.response.PostByIdResponse;
-import main.api.response.CommentResponse;
-import main.api.response.PostProcessingResponse;
-import main.api.response.PostsResponse;
+import main.api.response.*;
 import main.dto.CommentsResponseDto;
 import main.dto.CommentsResponseUserDto;
 import main.dto.PostsResponseDto;
@@ -268,39 +266,15 @@ public class PostService {
 
     }
 
-    public CommentResponse addComment(final CommentRequest commentRequest, final Principal principal) {
-        Integer parentId = commentRequest.getParentId();
-        Post currentPost = postRepository.findPostById(commentRequest.getPostId());
+    public ModerationResponse setModerationStatus(final ModerationRequest moderationRequest, final Principal principal) {
+        Post post = postRepository.findPostById(moderationRequest.getPostId());
+        String decision = moderationRequest.getDecision();
 
-        HashMap<String, String> errors = new HashMap<>();
-
-        if (parentId == null && currentPost == null) {
-            errors.put("text", "Неверный post_id");
-            return new CommentResponse(false, errors);
+        if (post == null) {
+            return new ModerationResponse(false);
         }
 
-        if (parentId != null) {
-            PostComment parentComment = commentRepository.findPostCommentById(parentId);
-            if (currentPost == null && parentComment == null) {
-                errors.put("text", "Неверный post_id и parent_id");
-                return new CommentResponse(false, errors);
-            } else if (parentComment == null) {
-                errors.put("text", "Неверный parent_id");
-                return new CommentResponse(false, errors);
-            } else if (currentPost == null) {
-                errors.put("text", "Неверный post_id");
-                return new CommentResponse(false, errors);
-            }
-        }
-
-        String text = commentRequest.getText();
-        System.out.println("text: "+text);
-        if (text.length() < 2) {
-            errors.put("text", "Текст не задан или слишком короткий");
-            return new CommentResponse(false, errors);
-        }
-
-        return new CommentResponse(saveComment(text, parentId, currentPost, principal));
+        return saveModerationStatus(moderationRequest, post, principal);
     }
 
     // PRIVATE PART ---------------------------------------------------------------------------------------------------
@@ -378,10 +352,11 @@ public class PostService {
     }
 
     private String createAnnounce(final String text) {
-        if (text.length() > announceLength) {
-            return Jsoup.parse(text).text().substring(0, announceLength - 4) + "...";
+        String textWithoutHtml = Jsoup.parse(text).text();
+        if (textWithoutHtml.length() > announceLength) {
+            return textWithoutHtml.substring(0, announceLength - 4) + "...";
         } else {
-            return Jsoup.parse(text).text();
+            return textWithoutHtml;
         }
     }
 
@@ -429,7 +404,7 @@ public class PostService {
             post.setModerationStatus(ModerationStatus.NEW);
             post.setModeratorId(null);
         } else {
-            post.setModeratorId(currentUser.getId());
+            post.setModeratorId(post.getModeratorId() == null ? null : currentUser.getId());
         }
         post.setTime(checkTimestamp(postRequest.getTimestamp()));
         post.setTitle(postRequest.getTitle());
@@ -461,18 +436,15 @@ public class PostService {
         return postTags;
     }
 
-    private Integer saveComment(final String text, final Integer parentId, final Post post, final Principal principal) {
-        PostComment postComment = new PostComment();
-
-        postComment.setParentId(parentId);
-        postComment.setPost(post);
-        postComment.setUser(userRepository.findByEmail(principal.getName()).get());
-        postComment.setTime(new Timestamp(System.currentTimeMillis()));
-        postComment.setText(text);
-        commentRepository.save(postComment);
-        return postComment.getId();
+    private ModerationResponse saveModerationStatus(final ModerationRequest moderationRequest,
+                                                    final Post post,
+                                                    final Principal principal) {
+        post.setModeratorId(userRepository.findByEmail(principal.getName()).get().getId());
+        post.setModerationStatus(moderationRequest.getDecision().equals("accept") ?
+                ModerationStatus.ACCEPTED : ModerationStatus.DECLINED);
+        postRepository.save(post);
+        return new ModerationResponse(true);
     }
-
 }
 
 
