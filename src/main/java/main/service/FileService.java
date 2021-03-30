@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -33,16 +34,11 @@ public class FileService {
 
     public ImageLoadResponse loadImage(final MultipartFile file) {
         String contentType = file.getContentType();
-
-        if (contentType.equals(JPEG_TYPE)) {
-            return checkSizeAndSaveImage(file, JPEG_EXT);
-        } else if (contentType.equals(PNG_TYPE)) {
-            return checkSizeAndSaveImage(file, PNG_EXT);
-        }
-
         HashMap<String, String> errors = new HashMap<>();
         errors.put("image", "Файл не jpg/png");
-        return new ImageLoadResponse(false, errors);
+        return contentType.equals(JPEG_TYPE) ? checkSizeAndSaveImage(file, JPEG_EXT) :
+                (contentType.equals(PNG_TYPE) ? checkSizeAndSaveImage(file, PNG_EXT) :
+                        new ImageLoadResponse(false, errors));
     }
 
     private ImageLoadResponse checkSizeAndSaveImage(final MultipartFile file, String fileExtension) {
@@ -65,9 +61,10 @@ public class FileService {
             createDir(Paths.get(currentUploadPath3));
             file.transferTo(filePath);
 
-            String responsePath = InetAddress.getLoopbackAddress().getHostName() + ":"
-                    + environment.getProperty("local.server.port") +
-                    "/" + filePath.toString().replace("\\", "/");
+            String responsePath = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/" + filePath.toString().replace("\\", "/"))
+                    .encode().build().toUri().toURL().toString();
             return new ImageLoadResponse(responsePath, true);
         } catch (IOException e) {
             e.printStackTrace();

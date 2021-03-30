@@ -24,6 +24,6 @@ public class SpringConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/upload/**")
-                .addResourceLocations(Paths.get(uploadPath).toAbsolutePath() + "/");
+                .addResourceLocations("file:" + uploadPath + "/");
     }
 }
