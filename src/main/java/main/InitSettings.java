@@ -16,6 +16,16 @@ import java.sql.SQLOutput;
 
 @Component
 public class InitSettings {
+
+    @Value("${blog.multiuser.mode}")
+    private boolean isMultiuserMode;
+
+    @Value("${blog.post.premoderation}")
+    private boolean isPostPremoderation;
+
+    @Value("${blog.statistic.is.public}")
+    private boolean isStatisticPublic;
+
     @Getter
     private static final String MULTI_USER_CODE = "MULTIUSER_MODE";
     private static final String MULTI_USER_NAME = "Многопользовательский режим";
@@ -49,17 +59,17 @@ public class InitSettings {
             GlobalSetting multiuser = new GlobalSetting();
             multiuser.setCode(MULTI_USER_CODE);
             multiuser.setName(MULTI_USER_NAME);
-            multiuser.setValue(YES);
+            multiuser.setValue(isMultiuserMode ? YES : NO);
 
             GlobalSetting postPremoderation = new GlobalSetting();
             postPremoderation.setCode(POST_PREMODERATION_CODE);
             postPremoderation.setName(POST_PREMODERATION_NAME);
-            postPremoderation.setValue(YES);
+            postPremoderation.setValue(isPostPremoderation ? YES : NO);
 
             GlobalSetting statisticIsPublic = new GlobalSetting();
             statisticIsPublic.setCode(STATISTIC_IS_PUBLIC_CODE);
             statisticIsPublic.setName(STATISTIC_IS_PUBLIC_NAME);
-            statisticIsPublic.setValue(NO);
+            statisticIsPublic.setValue(isStatisticPublic ? YES : NO);
 
             globalSettingsRepository.save(multiuser);
             globalSettingsRepository.save(postPremoderation);

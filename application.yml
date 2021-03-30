@@ -18,10 +18,9 @@ blog.captcha.lifetime.minutes: 5
 blog.captcha.width: 100
 blog.captcha.height: 35
 
-mode.recent: recent
-mode.popular: popular
-mode.best: best
-mode.early: early
+blog.multiuser.mode: true
+blog.post.premoderation: true
+blog.statistic.is.public: false
 
 upload.path: upload
 
