@@ -1,5 +1,6 @@
 package main.controller;
 
+import main.api.response.StatisticResponse;
 import main.service.StatisticService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,13 @@ public class StatisticController {
     @GetMapping(value = "/statistics/my")
     @PreAuthorize("hasAuthority('user:write')")
     public ResponseEntity getMyStatistic(final Principal principal) {
-        return new ResponseEntity(statisticService.getStatisticResponse(principal), HttpStatus.OK);
+        return new ResponseEntity(statisticService.getMyStatisticResponse(principal), HttpStatus.OK);
     }
 
-//    @GetMapping(value = "/statistics/all")
-//    @PreAuthorize("hasAuthority('user:moderate')")
-//    public ResponseEntity getAllStatistic(){
-//        return
-//    }
+    @GetMapping(value = "/statistics/all")
+    public ResponseEntity getAllStatistic(final Principal principal) {
+        StatisticResponse statisticResponse = statisticService.getAllStatisticResponse(principal);
+        return statisticResponse == null ? ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null) :
+                new ResponseEntity(statisticResponse, HttpStatus.OK);
+    }
 }

@@ -26,4 +26,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "(SELECT sum(view_count) FROM posts WHERE user_id = :id) AS viewsCount, " +
             "(SELECT MIN(time) FROM posts WHERE user_id = :id) AS firstPublicationTime", nativeQuery = true)
     StatisticNative getMyStatistic(@Param("id") int id);
+
+    @Query(value = "SELECT " +
+            "(SELECT count(*)  FROM posts) AS postsCount, " +
+            "(SELECT count(*) FROM posts " +
+            "JOIN post_votes ON post_id = posts.id " +
+            "WHERE post_votes.value = 1) AS likesCount, " +
+            "(SELECT count(*) FROM posts " +
+            "JOIN post_votes ON post_id = posts.id " +
+            "WHERE post_votes.value = -1) AS dislikesCount, " +
+            "(SELECT sum(view_count) FROM posts) AS viewsCount, " +
+            "(SELECT MIN(time) FROM posts) AS firstPublicationTime", nativeQuery = true)
+    StatisticNative getAllStatistic();
 }
