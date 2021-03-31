@@ -1,16 +1,13 @@
 package main.service;
 
-import com.fasterxml.jackson.annotation.OptBoolean;
 import main.api.response.StatisticResponse;
 import main.dto.StatisticNative;
 import main.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
-import java.util.Optional;
 
 @Service
 public class StatisticService {
@@ -31,16 +28,17 @@ public class StatisticService {
     private StatisticResponse statisticNative2Response(final StatisticNative statisticNative) {
         StatisticResponse statisticResponse = new StatisticResponse();
 
-        Optional<Timestamp> optionalTimestamp = statisticNative.getFirstPublication();
-        Timestamp firstPublication = optionalTimestamp.isPresent() ? optionalTimestamp.get() : null;
+        Integer postsCount = statisticNative.getPostsCount();
+        Integer likesCount = statisticNative.getLikesCount();
+        Integer dislikesCount = statisticNative.getDislikesCount();
+        Integer viewsCount = statisticNative.getViewsCount();
+        Timestamp firstPublicationTime = statisticNative.getFirstPublicationTime();
 
-        System.out.println(statisticNative.getPostsCount().get().getClass());
-
-        statisticResponse.setPostsCount(statisticNative.getPostsCount().orElse(0));
-        statisticResponse.setLikesCount(statisticNative.getLikesCount().orElse(0));
-        statisticResponse.setDislikesCount(statisticNative.getDislikesCount().orElse(0));
-        statisticResponse.setViewsCount(statisticNative.getViewsCount().orElse(0));
-        statisticResponse.setFirstPublication(firstPublication == null ? 0 : firstPublication
+        statisticResponse.setPostsCount(postsCount == null ? 0 : postsCount);
+        statisticResponse.setLikesCount(likesCount == null ? 0 : likesCount);
+        statisticResponse.setDislikesCount(dislikesCount == null ? 0 : dislikesCount);
+        statisticResponse.setViewsCount(viewsCount == null ? 0 : viewsCount);
+        statisticResponse.setFirstPublication(firstPublicationTime == null ? 0 : firstPublicationTime
                 .toLocalDateTime().toEpochSecond(ZoneOffset.of("+03:00")));
         return statisticResponse;
     }

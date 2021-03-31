@@ -4,6 +4,8 @@ INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES 
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,null,CAST('2019-09-10 10:33:06.427' AS DateTime),'Margo','mr@gmail.com','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-10-05 10:45:06.427' AS DateTime),'Петя','mail5@mail.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2020-11-05 10:45:06.427' AS DateTime),'Pasha','mail6@mail.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2021-03-05 10:45:06.427' AS DateTime),'New','m@m.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
+
 
 INSERT INTO posts (is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (1, 'ACCEPTED', 2, 'Самая 1 запись' , CAST('2019-06-29 18:32:06.427' AS DateTime), 'Первая запись', 2,1 );
 INSERT INTO posts (is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (1, 'ACCEPTED', 2, 'Очень <b>2 запись</b> <u>запись</u> Сразу после завершения работы над стандартом SQL1 в 1987 году была начата работа над новой версией стандарта, который должен был заменить стандарт SQL89, получив название SQL2, поскольку дата принятия документа на тот момент была неизвестна.' , CAST('2019-12-29 19:32:06.427' AS DateTime), 'Вторая запись', 5,2 );

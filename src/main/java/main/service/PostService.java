@@ -142,12 +142,15 @@ public class PostService {
 
         if (post == null) {
             return null;
-        } else if (principal != null) {
+        }
+
+        if (principal != null) {
             User currentUser = userRepository.findByEmail(principal.getName()).get();
-            if (currentUser.getIsModerator() == 1 || currentUser == post.getUser()) {
+            if (currentUser.getIsModerator() == 1 || currentUser.getId() == post.getUser().getId()) {
                 return postEntityToResponseById(post, id);
             }
         }
+
         postRepository.updateViewCount(id);
         return postEntityToResponseById(post, id);
     }

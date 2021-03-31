@@ -24,6 +24,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "JOIN post_votes ON post_id = posts.id " +
             "WHERE posts.user_id = :id AND post_votes.value = -1) AS dislikesCount, " +
             "(SELECT sum(view_count) FROM posts WHERE user_id = :id) AS viewsCount, " +
-            "(SELECT MIN(time) FROM posts WHERE user_id = :id) AS firstPublication", nativeQuery = true)
+            "(SELECT MIN(time) FROM posts WHERE user_id = :id) AS firstPublicationTime", nativeQuery = true)
     StatisticNative getMyStatistic(@Param("id") int id);
 }
