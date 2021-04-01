@@ -3,6 +3,7 @@ package main.controller;
 import main.api.request.CommentRequest;
 import main.api.response.CommentResponse;
 import main.service.CommentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    @Autowired
     public CommentController(final CommentService commentService) {
         this.commentService = commentService;
     }

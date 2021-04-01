@@ -2,6 +2,7 @@ package main.controller;
 
 import main.api.response.ImageLoadResponse;
 import main.service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ public class FileController {
 
     private final FileService fileService;
 
+    @Autowired
     public FileController(final FileService fileService) {
         this.fileService = fileService;
     }

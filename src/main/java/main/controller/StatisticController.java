@@ -2,6 +2,7 @@ package main.controller;
 
 import main.api.response.StatisticResponse;
 import main.service.StatisticService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ public class StatisticController {
 
     private final StatisticService statisticService;
 
+    @Autowired
     public StatisticController(final StatisticService statisticService) {
         this.statisticService = statisticService;
     }
