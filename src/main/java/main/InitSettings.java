@@ -26,23 +26,18 @@ public class InitSettings {
     @Value("${blog.statistic.is.public}")
     private boolean isStatisticPublic;
 
-    @Getter
-    private static final String MULTI_USER_CODE = "MULTIUSER_MODE";
-    private static final String MULTI_USER_NAME = "Многопользовательский режим";
+    public static final String MULTI_USER_CODE = "MULTIUSER_MODE";
+    public static final String MULTI_USER_NAME = "Многопользовательский режим";
 
-    @Getter
-    private static final String POST_PREMODERATION_CODE = "POST_PREMODERATION";
-    private static final String POST_PREMODERATION_NAME = "Премодерация постов";
+    public static final String POST_PREMODERATION_CODE = "POST_PREMODERATION";
+    public static final String POST_PREMODERATION_NAME = "Премодерация постов";
 
-    @Getter
-    private static final String STATISTIC_IS_PUBLIC_CODE = "STATISTIC_IS_PUBLIC";
-    private static final String STATISTIC_IS_PUBLIC_NAME = "Показывать всем статистику блога";
+    public static final String STATISTIC_IS_PUBLIC_CODE = "STATISTIC_IS_PUBLIC";
+    public static final String STATISTIC_IS_PUBLIC_NAME = "Показывать всем статистику блога";
 
-    @Getter
-    private static final String YES = "YES";
+    public static final String YES = "YES";
 
-    @Getter
-    private static final String NO = "NO";
+    public static final String NO = "NO";
 
     @Value("${upload.path}")
     private String uploadPath;

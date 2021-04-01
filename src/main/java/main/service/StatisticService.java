@@ -30,7 +30,7 @@ public class StatisticService {
 
     public StatisticResponse getAllStatisticResponse(final Principal principal) {
 
-        if (globalSettingsRepository.findByCode(InitSettings.getSTATISTIC_IS_PUBLIC_CODE()).getValue().equals(InitSettings.getNO())) {
+        if (globalSettingsRepository.findByCode(InitSettings.STATISTIC_IS_PUBLIC_CODE).getValue().equals(InitSettings.NO)) {
             if (principal == null || userRepository.findByEmail(principal.getName()).get().getIsModerator() == 0) {
                 return null;
             }

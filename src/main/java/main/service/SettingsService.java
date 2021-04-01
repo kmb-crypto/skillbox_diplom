@@ -22,10 +22,10 @@ public class SettingsService {
         SettingsResponse settingsResponse = new SettingsResponse();
         for (GlobalSetting setting : settingIterable) {
             String code = setting.getCode();
-            if (code.equals(InitSettings.getMULTI_USER_CODE())) {
+            if (code.equals(InitSettings.MULTI_USER_CODE)) {
                 settingsResponse.setMultiuserMode(valueToBoolean(setting));
                 continue;
-            } else if (code.equals(InitSettings.getPOST_PREMODERATION_CODE())) {
+            } else if (code.equals(InitSettings.POST_PREMODERATION_CODE)) {
                 settingsResponse.setPostPremoderation(valueToBoolean(setting));
                 continue;
             } else {
@@ -37,6 +37,6 @@ public class SettingsService {
     }
 
     private boolean valueToBoolean(final GlobalSetting setting) {
-        return setting.getValue().equals(InitSettings.getYES());
+        return setting.getValue().equals(InitSettings.YES);
     }
 }

@@ -20,7 +20,7 @@ blog.captcha.height: 35
 
 blog.multiuser.mode: true
 blog.post.premoderation: true
-blog.statistic.is.public: true
+blog.statistic.is.public: false
 
 upload.path: upload
 
