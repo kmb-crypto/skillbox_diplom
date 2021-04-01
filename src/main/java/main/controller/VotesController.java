@@ -26,6 +26,12 @@ public class VotesController {
     @PostMapping(value = "/like")
     @PreAuthorize("hasAuthority('user:write')")
     public ResponseEntity setLike(@RequestBody final VoteRequest voteRequest, final Principal principal) {
-        return new ResponseEntity(votesService.getLikeResponse(voteRequest, principal), HttpStatus.OK);
+        return new ResponseEntity(votesService.getVoteResponse(voteRequest, principal, (byte) 1), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/dislike")
+    @PreAuthorize("hasAuthority('user:write')")
+    public ResponseEntity setDislike(@RequestBody final VoteRequest voteRequest, final Principal principal) {
+        return new ResponseEntity(votesService.getVoteResponse(voteRequest, principal, (byte) -1), HttpStatus.OK);
     }
 }
