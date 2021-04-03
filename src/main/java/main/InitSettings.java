@@ -42,6 +42,9 @@ public class InitSettings {
     @Value("${upload.path}")
     private String uploadPath;
 
+    @Value("${avatars.path}")
+    private String avatarsPath;
+
     @Autowired
     private GlobalSettingsRepository globalSettingsRepository;
 
@@ -74,18 +77,20 @@ public class InitSettings {
         } else {
             System.out.println("Global settings ok");
         }
+        uploadFilesPathCreate(uploadPath);
+        uploadFilesPathCreate(avatarsPath);
+    }
 
+    private void uploadFilesPathCreate(final String uploadPath) {
         Path uploadImagePath = Paths.get(uploadPath).toAbsolutePath();
         if (!Files.exists(uploadImagePath)) {
             try {
                 Files.createDirectory(uploadImagePath);
-                System.out.println("Upload image folder created");
+                System.out.println(uploadPath + " folder created");
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Can't create upload image folder");
+                System.out.println("Can't create " + uploadPath + " folder");
             }
         }
     }
-
-
 }

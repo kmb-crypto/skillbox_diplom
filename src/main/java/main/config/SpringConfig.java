@@ -15,6 +15,9 @@ public class SpringConfig implements WebMvcConfigurer {
     @Value("${upload.path}")
     private String uploadPath;
 
+    @Value("${avatars.path}")
+    private String avatarsPath;
+
     @Bean
     public MultipartResolver multipartResolver() {
         return new CommonsMultipartResolver();
@@ -25,5 +28,8 @@ public class SpringConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:" + uploadPath + "/");
+
+        registry.addResourceHandler("/avatars/**")
+                .addResourceLocations("file:" + avatarsPath + "/");
     }
 }

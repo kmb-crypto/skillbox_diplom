@@ -23,6 +23,7 @@ blog.post.premoderation: true
 blog.statistic.is.public: false
 
 upload.path: upload
+avatars.path: upload_avatars
 
 
 

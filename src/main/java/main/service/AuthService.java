@@ -32,7 +32,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    private static final int PASSWORD_LENGTH_THRESHOLD = 6;
+    static final int PASSWORD_LENGTH_THRESHOLD = 6;
 
     @Autowired
     public AuthService(final UserRepository userRepository,
@@ -112,9 +112,7 @@ public class AuthService {
             return new AuthRegisterResponse(result, errors);
         }
     }
-
-    private boolean checkName(final String name) {
-
+    boolean checkName(final String name) {
         return name.replaceAll("[a-zа-яёA-ZА-ЯЁ\\s]+", "").equals("");
     }
 
