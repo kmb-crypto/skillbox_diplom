@@ -1,19 +1,24 @@
 package main.service;
 
+import main.api.response.ImageLoadResponse;
 import main.api.response.ProfileEditResponse;
+import main.model.User;
 import main.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 public class ProfileService {
     private final UserRepository userRepository;
     private final AuthService authService;
     private final FileService fileService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${avatars.path}")
     private String avatarsPath;
@@ -22,10 +27,12 @@ public class ProfileService {
 
     public ProfileService(final UserRepository userRepository,
                           final AuthService authService,
-                          final FileService fileService) {
+                          final FileService fileService,
+                          final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.authService = authService;
         this.fileService = fileService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ProfileEditResponse ProfileEdit(final MultipartFile multipartFile,
@@ -34,8 +41,8 @@ public class ProfileService {
         HashMap<String, String> errors = new HashMap<>();
         name = name.trim().replaceAll("\\s+", " ");
         boolean result = true;
-
-        String photoPath;
+        User currentUser = userRepository.findByEmail(principal.getName()).get();
+        String photoPath = "";
 
         if (!authService.checkName(name)) {
             errors.put("name", "Имя указано не верно");
@@ -47,10 +54,43 @@ public class ProfileService {
             result = false;
         }
 
-        if (!multipartFile.isEmpty()) {
-            photoPath = fileService.loadImage(multipartFile, avatarsPath, true, AVATAR_CROP_SIZE).getPath();
+        if (!email.equals(currentUser.getEmail())) {
+            Optional<User> userByEmail = userRepository.findByEmail(email);
+            if (userByEmail.isPresent()) {
+                errors.put("email", "Этот email уже зарегистрирован");
+                result = false;
+            }
         }
 
-        return new ProfileEditResponse(true);
+        if (multipartFile != null && removePhoto == 0) {
+            ImageLoadResponse imageLoadResponse = fileService.loadImage(multipartFile, avatarsPath, true, AVATAR_CROP_SIZE);
+            if (imageLoadResponse.isResult()) {
+                photoPath = imageLoadResponse.getPath();
+            } else {
+                errors.put("photo", imageLoadResponse.getErrors().get("image"));
+            }
+        }
+
+        if (result) {
+
+            currentUser.setName(name);
+            currentUser.setEmail(email);
+            if (password != null) {
+                currentUser.setPassword(passwordEncoder.encode(password));
+            }
+            if (removePhoto != null) {
+                if (removePhoto == 0) {
+                    currentUser.setPhoto(photoPath);
+                } else if (removePhoto == 1) {
+                    currentUser.setPhoto("");
+                }
+            }
+            userRepository.save(currentUser);
+            return new ProfileEditResponse(true);
+        } else {
+            return new ProfileEditResponse(false, errors);
+        }
+
+
     }
 }

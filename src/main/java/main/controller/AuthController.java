@@ -14,7 +14,7 @@ import java.security.Principal;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -24,23 +24,23 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping("/auth/check")
+    @GetMapping("/check")
     public ResponseEntity<AuthResponse> getAuthResponse(final Principal principal) {
         return ResponseEntity.ok(authService.checkAuthResponse(principal));
     }
 
-    @GetMapping("/auth/logout")
+    @GetMapping("/logout")
     public ResponseEntity<LogoutResponse> logout() {
 
         return ResponseEntity.ok(authService.getLogoutResponse());
     }
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public AuthRegisterResponse getAuthRegisterResponse(@RequestBody final RegisterUserRequest registerUserRequest) {
         return authService.getAuthRegisterResponse(registerUserRequest);
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody final LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.getLoginAuthResponse(loginRequest));
     }

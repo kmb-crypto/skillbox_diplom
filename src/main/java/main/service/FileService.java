@@ -56,30 +56,26 @@ public class FileService {
         String currentUploadPath3 = currentUploadPath2 + "/" + randomUuid.substring(4, 6);
 
         String fullFilePath = currentUploadPath3
-                + "/" + UUID.randomUUID().toString().substring(0, 8);
-        String fullFilePathWithExt = fullFilePath + "." + fileExtension;
-
+                + "/" + UUID.randomUUID().toString().substring(0, 8) + "." + fileExtension;
         try {
-            String responsePath;
             createDir(Paths.get(currentUploadPath1));
             createDir(Paths.get(currentUploadPath2));
             createDir(Paths.get(currentUploadPath3));
 
             if (isCrop) {
                 BufferedImage image = Scalr.resize(ImageIO.read(file.getInputStream()), sizeAfterCrop, sizeAfterCrop);
-                ImageIO.write(image, fileExtension, new File(fullFilePathWithExt));
-                responsePath = ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/" + (fullFilePathWithExt).toString().replace("\\", "/"))
-                        .encode().build().toUri().toURL().toString();
+                ImageIO.write(image, fileExtension, new File(fullFilePath));
+
             } else {
-                Path filePath = Paths.get(fullFilePathWithExt);
+                Path filePath = Paths.get(fullFilePath);
                 file.transferTo(filePath);
-                responsePath = ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/" + filePath.toString().replace("\\", "/"))
-                        .encode().build().toUri().toURL().toString();
+
             }
+            String responsePath = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/" + (fullFilePath).toString().replace("\\", "/"))
+                    .encode().build().toUri().toURL().toString();
+
             return new ImageLoadResponse(responsePath, true);
         } catch (IOException e) {
             e.printStackTrace();
