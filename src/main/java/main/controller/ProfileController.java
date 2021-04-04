@@ -1,7 +1,6 @@
 package main.controller;
 
 import main.api.request.ProfileEditRequest;
-import main.api.response.ProfileEditResponse;
 import main.service.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

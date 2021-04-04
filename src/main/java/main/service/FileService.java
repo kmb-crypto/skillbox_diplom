@@ -2,7 +2,6 @@ package main.service;
 
 import main.api.response.ImageLoadResponse;
 import org.imgscalr.Scalr;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +11,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +71,7 @@ public class FileService {
             }
             String responsePath = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
-                    .path("/" + (fullFilePath).toString().replace("\\", "/"))
+                    .path("/" + (fullFilePath).replace("\\", "/"))
                     .encode().build().toUri().toURL().toString();
 
             return new ImageLoadResponse(responsePath, true);
