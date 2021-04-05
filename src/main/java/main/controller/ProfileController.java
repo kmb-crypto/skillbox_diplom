@@ -29,7 +29,7 @@ public class ProfileController {
                                                @RequestParam(value = "password", required = false) final String password,
                                                @RequestParam(value = "removePhoto", required = false) final int removePhoto,
                                                final Principal principal) {
-        return new ResponseEntity(profileService.ProfileEdit(multipartFile, name, email, password, removePhoto, principal), HttpStatus.OK);
+        return new ResponseEntity(profileService.profileEdit(multipartFile, name, email, password, removePhoto, principal), HttpStatus.OK);
 
     }
 
@@ -38,7 +38,7 @@ public class ProfileController {
     public ResponseEntity editProfileJson(@RequestBody ProfileEditRequest profileEditRequest,
                                           final Principal principal) {
 
-        return new ResponseEntity(profileService.ProfileEdit(null,
+        return new ResponseEntity(profileService.profileEdit(null,
                 profileEditRequest.getName(),
                 profileEditRequest.getEmail(),
                 profileEditRequest.getPassword(),

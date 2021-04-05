@@ -1,10 +1,15 @@
 package main.service;
 
+import main.api.request.LoginRequest;
 import main.api.response.ImageLoadResponse;
 import main.api.response.ProfileEditResponse;
 import main.model.User;
 import main.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +24,7 @@ public class ProfileService {
     private final AuthService authService;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Value("${avatars.path}")
     private String avatarsPath;
@@ -28,14 +34,16 @@ public class ProfileService {
     public ProfileService(final UserRepository userRepository,
                           final AuthService authService,
                           final FileService fileService,
-                          final PasswordEncoder passwordEncoder) {
+                          final PasswordEncoder passwordEncoder,
+                          final AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.authService = authService;
         this.fileService = fileService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
-    public ProfileEditResponse ProfileEdit(final MultipartFile multipartFile,
+    public ProfileEditResponse profileEdit(final MultipartFile multipartFile,
                                            String name, final String email, final String password,
                                            final Integer removePhoto, final Principal principal) {
         HashMap<String, String> errors = new HashMap<>();
@@ -85,7 +93,12 @@ public class ProfileService {
                     currentUser.setPhoto("");
                 }
             }
+
             userRepository.save(currentUser);
+            Authentication auth = authenticationManager
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(auth);
             return new ProfileEditResponse(true);
         } else {
             return new ProfileEditResponse(false, errors);
