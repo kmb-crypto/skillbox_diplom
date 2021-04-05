@@ -1,6 +1,7 @@
 package main.service;
 
 import main.InitSettings;
+import main.api.request.SettingsRequest;
 import main.api.response.SettingsResponse;
 import main.model.GlobalSetting;
 import main.repository.GlobalSettingsRepository;
@@ -30,13 +31,30 @@ public class SettingsService {
                 continue;
             } else {
                 settingsResponse.setStatisticIsPublic(valueToBoolean(setting));
-
             }
         }
         return settingsResponse;
     }
 
+    public void setGlobalSettings(final SettingsRequest settingsRequest) {
+
+        GlobalSetting multiuser = globalSettingsRepository.findByCode(InitSettings.MULTI_USER_CODE);
+        multiuser.setValue(settingsRequest.isMultiuserMode() ? InitSettings.YES : InitSettings.NO);
+
+        GlobalSetting postPremoderation = globalSettingsRepository.findByCode(InitSettings.POST_PREMODERATION_CODE);
+        postPremoderation.setValue(settingsRequest.isPostPremoderation() ? InitSettings.YES : InitSettings.NO);
+
+        GlobalSetting statisticIsPublic = globalSettingsRepository.findByCode(InitSettings.STATISTIC_IS_PUBLIC_CODE);
+        statisticIsPublic.setValue(settingsRequest.isStatisticIsPublic() ? InitSettings.YES : InitSettings.NO);
+
+        globalSettingsRepository.save(multiuser);
+        globalSettingsRepository.save(postPremoderation);
+        globalSettingsRepository.save(statisticIsPublic);
+    }
+
     private boolean valueToBoolean(final GlobalSetting setting) {
         return setting.getValue().equals(InitSettings.YES);
     }
+
+
 }

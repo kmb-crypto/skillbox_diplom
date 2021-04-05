@@ -1,6 +1,6 @@
 package main.service;
 
-import main.api.request.CommentRequest;
+import main.InitSettings;
 import main.api.request.ModerationRequest;
 import main.api.request.PostRequest;
 import main.api.response.*;
@@ -45,6 +45,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final GlobalSettingsRepository globalSettingsRepository;
 
     private final TagService tagService;
 
@@ -55,12 +56,13 @@ public class PostService {
                        final CommentRepository commentRepository,
                        final UserRepository userRepository,
                        final TagRepository tagRepository,
-                       final TagService tagService) {
+                       GlobalSettingsRepository globalSettingsRepository, final TagService tagService) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
+        this.globalSettingsRepository = globalSettingsRepository;
         this.tagService = tagService;
     }
 
@@ -387,7 +389,8 @@ public class PostService {
     private void addNewPost(final PostRequest postRequest, final Principal principal) {
         Post post = new Post();
         post.setIsActive(postRequest.getActive());
-        post.setModerationStatus(ModerationStatus.NEW);
+        post.setModerationStatus(globalSettingsRepository.findByCode(InitSettings.POST_PREMODERATION_CODE)
+                .getValue().equals(InitSettings.YES) ? ModerationStatus.NEW : ModerationStatus.ACCEPTED);
         post.setUser(userRepository.findByEmail(principal.getName()).get());
         post.setTime(checkTimestamp(postRequest.getTimestamp()));
         post.setTitle(postRequest.getTitle());
