@@ -1,9 +1,9 @@
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-06-25 15:32:06.427' AS DateTime),'Алёша Попович','mail@mail.ru','$2y$12$ZlJ8EyU1g55DguscyX7iveZWmVaTd5aNd/cf0VmCc7lwq47wkzLBe',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,'privet',CAST('2019-06-25 15:33:06.427' AS DateTime),'Линус Торвальдс','lt@gmail.com','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,null,CAST('2019-06-25 15:33:06.427' AS DateTime),'Линус Торвальдс','lt@gmail.com','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-08-20 15:33:06.427' AS DateTime),'Vasya Sidorov','mail3@mail.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (1,null,CAST('2019-09-10 10:33:06.427' AS DateTime),'Margo','mr@gmail.com','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2019-10-05 10:45:06.427' AS DateTime),'Петя','mail5@mail.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
-INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2020-11-05 10:45:06.427' AS DateTime),'Pasha','mail6@mail.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
+INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2020-11-05 10:45:06.427' AS DateTime),'Pasha','forrumuser@gmail.com','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 INSERT INTO users (is_moderator,code,reg_time,name,email,password,photo) VALUES (0,null,CAST('2021-03-05 10:45:06.427' AS DateTime),'New','m@m.ru','$2y$12$W3CBs9KViDstqu/Yb74jXOdfvNQt6ChW4I3aPEWCZ4kk66okAjVBy',null);
 
 

@@ -22,8 +22,21 @@ blog.multiuser.mode: true
 blog.post.premoderation: true
 blog.statistic.is.public: false
 
+blog.email.sender: forrumdevpub@gmail.com
+blog.email.sender.password: burduninkonstantin
+blog.email.sender.host: smtp.gmail.com
+blog.email.sender.port: 587
+blog.email.sender.protocol: smtp
+blog.email.sender.smtp.auth: true
+blog.email.sender.smtp.starttls.enable: true
+blog.email.sender.debug: true
+blog.email.sender.email.text.filename: restoreEmailText.txt
+blog.email.sender.email.text.nameoffset: 9
+
 upload.path: upload
 avatars.path: upload_avatars
+
+
 
 
 

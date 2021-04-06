@@ -1,6 +1,5 @@
 package main;
 
-import lombok.Getter;
 import main.model.GlobalSetting;
 import main.repository.GlobalSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLOutput;
 
 @Component
 public class InitSettings {
@@ -77,6 +75,7 @@ public class InitSettings {
         } else {
             System.out.println("Global settings ok");
         }
+
         uploadFilesPathCreate(uploadPath);
         uploadFilesPathCreate(avatarsPath);
     }

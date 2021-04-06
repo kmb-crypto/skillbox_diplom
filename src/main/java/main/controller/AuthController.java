@@ -1,12 +1,14 @@
 package main.controller;
 
 import main.api.request.LoginRequest;
+import main.api.request.PasswordRestoreRequest;
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
 import main.api.request.RegisterUserRequest;
 import main.api.response.LogoutResponse;
 import main.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,4 +47,8 @@ public class AuthController {
         return ResponseEntity.ok(authService.getLoginAuthResponse(loginRequest));
     }
 
+    @PostMapping("/restore")
+    public ResponseEntity getPasswordRestoreResponse(@RequestBody final PasswordRestoreRequest passwordRestoreRequest) {
+        return new ResponseEntity(authService.sendPasswordRestoreLink(passwordRestoreRequest), HttpStatus.OK);
+    }
 }

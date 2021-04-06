@@ -1,26 +1,34 @@
 package main.service;
 
 import main.api.request.LoginRequest;
+import main.api.request.PasswordRestoreRequest;
+import main.api.request.RegisterUserRequest;
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
-import main.api.request.RegisterUserRequest;
 import main.api.response.LogoutResponse;
+import main.api.response.PasswordRestoreResponse;
 import main.dto.AuthResponseUserDto;
 import main.model.User;
 import main.repository.CaptchaRepository;
 import main.repository.PostRepository;
 import main.repository.UserRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,20 +39,29 @@ public class AuthService {
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     static final int PASSWORD_LENGTH_THRESHOLD = 6;
+
+    @Value("${blog.email.sender.email.text.filename}")
+    private String emailTextFilename;
+
+    @Value("${blog.email.sender.email.text.nameoffset}")
+    private int nameOffset;
 
     @Autowired
     public AuthService(final UserRepository userRepository,
                        final CaptchaRepository captchaRepository,
                        final PostRepository postRepository,
                        final PasswordEncoder passwordEncoder,
-                       final AuthenticationManager authenticationManager) {
+                       final AuthenticationManager authenticationManager,
+                       final EmailService emailService) {
         this.userRepository = userRepository;
         this.captchaRepository = captchaRepository;
         this.postRepository = postRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
 
@@ -112,6 +129,41 @@ public class AuthService {
             return new AuthRegisterResponse(result, errors);
         }
     }
+
+    public PasswordRestoreResponse sendPasswordRestoreLink(final PasswordRestoreRequest passwordRestoreRequest) {
+        String email = passwordRestoreRequest.getEmail();
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            return new PasswordRestoreResponse(false);
+        } else {
+            try {
+                User currentUser = optionalUser.get();
+                String hash = System.currentTimeMillis() + DigestUtils.sha256Hex(String.valueOf(System.currentTimeMillis()));
+                String hashLink = ServletUriComponentsBuilder
+                        .fromCurrentContextPath()
+                        .path("/login/change-password/" + hash)
+                        .encode().build().toUri().toURL().toString();
+
+                StringBuilder emailText = new StringBuilder();
+                List<String> lines = Files.readAllLines(Paths.get("src/main/resources/" + emailTextFilename));
+                lines.forEach(l -> emailText.append(l + "\n"));
+
+                emailText.insert(nameOffset, " " + currentUser.getName());
+                emailText.append(hashLink);
+
+                emailService.sendSimpleMessage(email, "Восстановление пароля", String.valueOf(emailText));
+                currentUser.setCode(hash);
+                userRepository.save(currentUser);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new PasswordRestoreResponse(true);
+        }
+    }
+
+    // DEFAUTL AND PRIVATE PART ---------------------------------------------------------------------------------
+
     boolean checkName(final String name) {
         return name.replaceAll("[a-zа-яёA-ZА-ЯЁ\\s]+", "").equals("");
     }
@@ -125,8 +177,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    private AuthResponse user2authResponseUserDto(User currentUser) {
-
+    private AuthResponse user2authResponseUserDto(final User currentUser) {
 
         AuthResponseUserDto authResponseUserDto = new AuthResponseUserDto();
         authResponseUserDto.setId(currentUser.getId());
