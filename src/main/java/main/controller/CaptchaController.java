@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class AuthCaptchaController {
+public class CaptchaController {
     private final CaptchaService captchaService;
 
     @Autowired
-    public AuthCaptchaController(final CaptchaService captchaService) {
+    public CaptchaController(final CaptchaService captchaService) {
         this.captchaService = captchaService;
     }
 

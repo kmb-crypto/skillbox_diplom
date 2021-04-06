@@ -1,12 +1,10 @@
 package main.service;
 
 import main.api.request.LoginRequest;
+import main.api.request.PasswordChangeRequest;
 import main.api.request.PasswordRestoreRequest;
 import main.api.request.RegisterUserRequest;
-import main.api.response.AuthRegisterResponse;
-import main.api.response.AuthResponse;
-import main.api.response.LogoutResponse;
-import main.api.response.PasswordRestoreResponse;
+import main.api.response.*;
 import main.dto.AuthResponseUserDto;
 import main.model.User;
 import main.repository.CaptchaRepository;
@@ -42,6 +40,10 @@ public class AuthService {
     private final EmailService emailService;
 
     static final int PASSWORD_LENGTH_THRESHOLD = 6;
+
+    @Value("${blog.restore.password.link.lifetime.minutes}")
+    private int linkLifetime;
+    private long linkLifeTimeMillis = linkLifetime * 60 * 1000;
 
     @Value("${blog.email.sender.email.text.filename}")
     private String emailTextFilename;
@@ -160,6 +162,15 @@ public class AuthService {
             }
             return new PasswordRestoreResponse(true);
         }
+    }
+
+    public PasswordChangeResponse changePassword(final PasswordChangeRequest passwordChangeRequest) {
+        String code = passwordChangeRequest.getCode();
+        Long codeTimeMillis = Long.parseLong(code.substring(0, 12));
+        System.out.println(System.currentTimeMillis());
+        System.out.println((System.currentTimeMillis() - codeTimeMillis) * 1000);
+
+        return new PasswordChangeResponse(true);
     }
 
     // DEFAUTL AND PRIVATE PART ---------------------------------------------------------------------------------

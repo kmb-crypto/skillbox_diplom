@@ -1,6 +1,7 @@
 package main.controller;
 
 import main.api.request.LoginRequest;
+import main.api.request.PasswordChangeRequest;
 import main.api.request.PasswordRestoreRequest;
 import main.api.response.AuthRegisterResponse;
 import main.api.response.AuthResponse;
@@ -10,6 +11,7 @@ import main.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -51,4 +53,10 @@ public class AuthController {
     public ResponseEntity getPasswordRestoreResponse(@RequestBody final PasswordRestoreRequest passwordRestoreRequest) {
         return new ResponseEntity(authService.sendPasswordRestoreLink(passwordRestoreRequest), HttpStatus.OK);
     }
+
+    @PostMapping("/password")
+    public ResponseEntity getPasswordChangeResponse(@RequestBody final PasswordChangeRequest passwordChangeRequest) {
+        return new ResponseEntity(authService.changePassword(passwordChangeRequest), HttpStatus.OK);
+    }
+
 }
