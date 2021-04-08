@@ -1,6 +1,5 @@
 package main.service;
 
-import main.api.request.LoginRequest;
 import main.api.response.ImageLoadResponse;
 import main.api.response.ProfileEditResponse;
 import main.model.User;

@@ -362,11 +362,9 @@ public class PostService {
 
     private String createAnnounce(final String text) {
         String textWithoutHtml = Jsoup.parse(text).text();
-        if (textWithoutHtml.length() > announceLength) {
-            return textWithoutHtml.substring(0, announceLength - 4) + "...";
-        } else {
-            return textWithoutHtml;
-        }
+
+        return textWithoutHtml.length() > announceLength ?
+                textWithoutHtml.substring(0, announceLength - 4) + "..." : textWithoutHtml;
     }
 
     private HashMap<String, String> checkPostRequest(final PostRequest postRequest) {
@@ -379,11 +377,8 @@ public class PostService {
 
             errors.put("text", "Текст публикации слишком короткий");
         }
-        if (errors.size() > 0) {
-            return errors;
-        } else {
-            return null;
-        }
+
+        return errors.size() > 0 ? errors : null;
     }
 
     private void addNewPost(final PostRequest postRequest, final Principal principal) {
@@ -434,11 +429,8 @@ public class PostService {
     private Timestamp checkTimestamp(final long time) {
         Instant instant = Instant.ofEpochSecond(time);
         Instant now = Instant.now();
-        if (instant.isBefore(now)) {
-            return Timestamp.from(now);
-        } else {
-            return Timestamp.from(instant);
-        }
+
+        return instant.isBefore(now) ? Timestamp.from(now) : Timestamp.from(instant);
     }
 
     private List<Tag> getTags(final List<String> tags) {
