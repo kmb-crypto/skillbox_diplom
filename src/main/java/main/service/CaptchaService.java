@@ -25,13 +25,13 @@ public class CaptchaService {
     private final static int OLD_CAPTCHA_CHECH_SHEDULE = 120000;
     private final CaptchaRepository captchaRepository;
 
-    @Value("${blog.captcha.lifetime.minutes}")
+    @Value("${blog.captcha.lifetime.minutes:5}")
     private int captchaLifetimeMinutes;
 
-    @Value("${blog.captcha.width}")
+    @Value("${blog.captcha.width:100}")
     private int captchaWidth;
 
-    @Value("${blog.captcha.height}")
+    @Value("${blog.captcha.height:35}")
     private int captchaHeight;
 
     @Autowired
