@@ -40,10 +40,10 @@ public class AuthService {
     private final EmailService emailService;
 
     static final int PASSWORD_LENGTH_THRESHOLD = 6;
+    static final int MILLISECONDS_IN_MINUTE = 60_000;
 
-    @Value("${blog.restore.password.link.lifetime.minutes}")
+    @Value("${blog.restore.password.link.lifetime.minutes:2}")
     private int linkLifetime;
-    private long linkLifeTimeMillis = linkLifetime * 60 * 1000;
 
     @Value("${blog.email.sender.email.text.filename}")
     private String emailTextFilename;
@@ -123,10 +123,8 @@ public class AuthService {
         }
 
         if (result) {
-
             addNewUser(registerUserRequest);
             return new AuthRegisterResponse(result);
-
         } else {
             return new AuthRegisterResponse(result, errors);
         }
@@ -158,19 +156,51 @@ public class AuthService {
                 userRepository.save(currentUser);
 
             } catch (Exception e) {
+                System.out.println("Проблема с отправкой ссылки восстановления");
                 e.printStackTrace();
+                return new PasswordRestoreResponse(false);
             }
             return new PasswordRestoreResponse(true);
         }
     }
 
     public PasswordChangeResponse changePassword(final PasswordChangeRequest passwordChangeRequest) {
-        String code = passwordChangeRequest.getCode();
-        Long codeTimeMillis = Long.parseLong(code.substring(0, 12));
-        System.out.println(System.currentTimeMillis());
-        System.out.println((System.currentTimeMillis() - codeTimeMillis) * 1000);
+        String password = passwordChangeRequest.getPassword();
+        HashMap<String, String> errors = new HashMap<>();
+        boolean result = true;
 
-        return new PasswordChangeResponse(true);
+        if (password.length() < PASSWORD_LENGTH_THRESHOLD) {
+            errors.put("password", "Пароль короче 6-ти символов");
+            result = false;
+        }
+
+        String code = passwordChangeRequest.getCode();
+        Long codeTimeMillis = Long.parseLong(code.substring(0, 13));
+
+        if (System.currentTimeMillis() - codeTimeMillis > (long) linkLifetime * MILLISECONDS_IN_MINUTE) {
+            System.out.println(System.currentTimeMillis() - codeTimeMillis + " " + linkLifetime * MILLISECONDS_IN_MINUTE + " " + linkLifetime);
+            errors.put("code", "Ссылка для восстановления пароля устарела.\n <a href=\"/login/restore-password\">Запросить ссылку снова</a>");
+            result = false;
+        }
+        if (captchaRepository.getCaptchaCode(passwordChangeRequest.getCaptcha(), passwordChangeRequest.getCaptchaSecret()) == null) {
+            errors.put("captcha", "Код с картинки введён неверно");
+            result = false;
+        }
+
+        Optional<User> optionalUser = userRepository.findByCode(code);
+        if (optionalUser.isEmpty()) {
+            errors.put("code", "Ссылка для восстановления пароля неверна.\n <a href=\"/login/restore-password\">Запросить ссылку снова</a>");
+            result = false;
+        }
+
+        if (result) {
+            User user = optionalUser.get();
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+            return new PasswordChangeResponse(true);
+        } else {
+            return new PasswordChangeResponse(false, errors);
+        }
     }
 
     // DEFAUTL AND PRIVATE PART ---------------------------------------------------------------------------------

@@ -15,6 +15,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByCode(String code);
+
     @Query(value = "SELECT " +
             "(SELECT count(*)  FROM posts WHERE user_id = :id) AS postsCount, " +
             "(SELECT count(*) FROM posts " +
