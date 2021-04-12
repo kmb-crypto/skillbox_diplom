@@ -33,7 +33,7 @@ blog.email.sender.smtp.auth: true
 blog.email.sender.smtp.starttls.enable: true
 blog.email.sender.debug: true
 blog.email.sender.email.text.filename: restoreEmailText.txt
-blog.email.sender.email.text.nameoffset: 9
+blog.email.sender.email.text.nameoffset: 13
 
 upload.path: upload
 avatars.path: upload_avatars

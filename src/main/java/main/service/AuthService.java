@@ -149,7 +149,7 @@ public class AuthService {
                 lines.forEach(l -> emailText.append(l + "\n"));
 
                 emailText.insert(nameOffset, " " + currentUser.getName());
-                emailText.append(hashLink);
+                emailText.append("<a href=\"" + hashLink + "\">ССЫЛКА ДЛЯ ВОССТАНОВЛЕНИЯ</a>");
 
                 emailService.sendSimpleMessage(email, "Восстановление пароля", String.valueOf(emailText));
                 currentUser.setCode(hash);
