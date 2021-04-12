@@ -405,7 +405,9 @@ public class PostService {
     private void setEditablePost(final Post post, final PostRequest postRequest, final Principal principal) {
         post.setIsActive(postRequest.getActive());
         User currentUser = userRepository.findByEmail(principal.getName()).get();
-        if (currentUser.getIsModerator() == 0) {
+        if (currentUser.getIsModerator() == 0 &&
+                globalSettingsRepository.findByCode(InitSettings.POST_PREMODERATION_CODE).getValue()
+                        .equals(InitSettings.YES)) {
             post.setModerationStatus(ModerationStatus.NEW);
             post.setModeratorId(null);
         } else {
