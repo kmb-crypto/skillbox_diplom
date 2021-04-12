@@ -20,13 +20,13 @@ public class EmailService {
 
     public void sendSimpleMessage(final String to, final String subject, final String text) {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,"utf-8");
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
         try {
             helper.setFrom("forrumdevpub@gmail.com");
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(text,true);
+            helper.setText(text, true);
         } catch (MessagingException e) {
             System.out.println("Проблемы с отправкой email со ссылкой восстановления пароля");
             e.printStackTrace();

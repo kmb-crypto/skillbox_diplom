@@ -56,7 +56,8 @@ public class PostService {
                        final CommentRepository commentRepository,
                        final UserRepository userRepository,
                        final TagRepository tagRepository,
-                       GlobalSettingsRepository globalSettingsRepository, final TagService tagService) {
+                       final GlobalSettingsRepository globalSettingsRepository,
+                       final TagService tagService) {
         this.postRepository = postRepository;
         this.postVotesRepository = postVotesRepository;
         this.commentRepository = commentRepository;

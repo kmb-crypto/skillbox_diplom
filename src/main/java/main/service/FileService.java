@@ -41,7 +41,8 @@ public class FileService {
     }
 
 
-    ImageLoadResponse checkSizeAndSaveImage(final MultipartFile file, String fileExtension, String uploadPath, boolean isCrop, final Integer sizeAfterCrop) {
+    ImageLoadResponse checkSizeAndSaveImage(final MultipartFile file, final String fileExtension,
+                                            final String uploadPath, boolean isCrop, final Integer sizeAfterCrop) {
         if (file.getSize() > FILE_SIZE_THRESHOLD) {
             HashMap<String, String> errors = new HashMap<>();
             errors.put("image", "Картинка больше 2-х мегабайт");
