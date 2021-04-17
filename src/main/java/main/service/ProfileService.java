@@ -76,6 +76,7 @@ public class ProfileService {
                 photoPath = imageLoadResponse.getPath();
             } else {
                 errors.put("photo", imageLoadResponse.getErrors().get("image"));
+                result = false;
             }
         }
 
@@ -102,7 +103,5 @@ public class ProfileService {
         } else {
             return new ProfileEditResponse(false, errors);
         }
-
-
     }
 }
