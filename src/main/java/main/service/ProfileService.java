@@ -48,7 +48,8 @@ public class ProfileService {
         HashMap<String, String> errors = new HashMap<>();
         name = name.trim().replaceAll("\\s+", " ");
         boolean result = true;
-        User currentUser = userRepository.findByEmail(principal.getName()).get();
+        String currentEmail = principal.getName();
+        User currentUser = userRepository.findByEmail(currentEmail).get();
         String photoPath = "";
 
         if (!authService.checkName(name)) {
@@ -92,12 +93,11 @@ public class ProfileService {
                     currentUser.setPhoto("");
                 }
             }
+            if (!currentEmail.equals(email)) {
+                SecurityContextHolder.clearContext();
+            }
 
             userRepository.save(currentUser);
-            Authentication auth = authenticationManager
-                    .authenticate(
-                            new UsernamePasswordAuthenticationToken(email, password));
-            SecurityContextHolder.getContext().setAuthentication(auth);
             return new ProfileEditResponse(true);
         } else {
             return new ProfileEditResponse(false, errors);
