@@ -31,6 +31,9 @@ public class VotesService {
     }
 
     public VoteResponse getVoteResponse(final VoteRequest voteRequest, final Principal principal, final byte value) {
+        if (principal==null){
+            return new VoteResponse(false);
+        }
         User currentUser = userRepository.findByEmail(principal.getName()).get();
         int currentUserId = currentUser.getId();
         int postId = voteRequest.getPostId();
