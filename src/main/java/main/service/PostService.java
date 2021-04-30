@@ -30,15 +30,20 @@ import java.util.List;
 @Service
 public class PostService {
 
-    @Value("${blog.default.page.limit}")
+    @Value("${blog.default.page.limit:10}")
     private int defaultPageLimit;
 
-    @Value("${blog.announce.length}")
+    @Value("${blog.announce.length:150}")
     private int announceLength;
 
+    @Value("${blog.min.title.length:3}")
+    private int minTitleLength;
+
+    @Value("${blog.min.text.length:50}")
+    private int minTextLength;
+
+
     private static final String DEFAULT_MODE = "recent";
-    private static final int MIN_TITLE_LENGHT = 3;
-    private static final int MIN_TEXT_LENGHT = 50;
 
     private final PostRepository postRepository;
     private final PostVotesRepository postVotesRepository;
@@ -370,11 +375,11 @@ public class PostService {
 
     private HashMap<String, String> checkPostRequest(final PostRequest postRequest) {
         HashMap<String, String> errors = new HashMap<>();
-        if (postRequest.getTitle().length() < MIN_TITLE_LENGHT) {
+        if (postRequest.getTitle().length() < minTitleLength) {
 
             errors.put("title", "Заголовок не установлен");
         }
-        if (postRequest.getText().length() < MIN_TEXT_LENGHT) {
+        if (postRequest.getText().length() < minTextLength) {
 
             errors.put("text", "Текст публикации слишком короткий");
         }

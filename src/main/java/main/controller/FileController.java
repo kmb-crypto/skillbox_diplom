@@ -1,9 +1,9 @@
 package main.controller;
 
 import main.api.response.ImageLoadResponse;
+import main.config.SpringConfig;
 import main.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,19 +18,18 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileController {
 
     private final FileService fileService;
-
-    @Value("${upload.path}")
-    private String uploadPath;
+    private final SpringConfig config;
 
     @Autowired
-    public FileController(final FileService fileService) {
+    public FileController(final FileService fileService, final SpringConfig config) {
         this.fileService = fileService;
+        this.config = config;
     }
 
     @PostMapping(value = "/image")
     @PreAuthorize("hasAuthority('user:write')")
     public ResponseEntity loadImage(@RequestParam("image") final MultipartFile file) {
-        ImageLoadResponse imageLoadResponse = fileService.loadImage(file, uploadPath, false, null);
+        ImageLoadResponse imageLoadResponse = fileService.loadImage(file, config.getUploadPath(), false, null);
 
         if (imageLoadResponse.isResult()) {
 

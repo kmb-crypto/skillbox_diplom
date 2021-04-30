@@ -14,10 +14,10 @@ import java.util.Properties;
 
 @Configuration
 public class SpringConfig implements WebMvcConfigurer {
-    @Value("${upload.path}")
+    @Value("${upload.path:upload}")
     private String uploadPath;
 
-    @Value("${avatars.path}")
+    @Value("${avatars.path:upload_avatars}")
     private String avatarsPath;
 
     @Value("${blog.email.sender}")
@@ -77,5 +77,13 @@ public class SpringConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/" + avatarsPath + "/**")
                 .addResourceLocations("file:" + avatarsPath + "/");
 
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public String getAvatarsPath() {
+        return avatarsPath;
     }
 }

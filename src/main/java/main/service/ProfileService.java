@@ -2,12 +2,10 @@ package main.service;
 
 import main.api.response.ImageLoadResponse;
 import main.api.response.ProfileEditResponse;
+import main.config.SpringConfig;
 import main.model.User;
 import main.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,9 +22,7 @@ public class ProfileService {
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
-    @Value("${avatars.path}")
-    private String avatarsPath;
+    private final SpringConfig config;
 
     static int AVATAR_CROP_SIZE = 36;
 
@@ -34,12 +30,14 @@ public class ProfileService {
                           final AuthService authService,
                           final FileService fileService,
                           final PasswordEncoder passwordEncoder,
-                          final AuthenticationManager authenticationManager) {
+                          final AuthenticationManager authenticationManager,
+                          final SpringConfig config) {
         this.userRepository = userRepository;
         this.authService = authService;
         this.fileService = fileService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.config = config;
     }
 
     public ProfileEditResponse profileEdit(final MultipartFile multipartFile,
@@ -71,7 +69,8 @@ public class ProfileService {
         }
 
         if (multipartFile != null && removePhoto == 0) {
-            ImageLoadResponse imageLoadResponse = fileService.loadImage(multipartFile, avatarsPath, true, AVATAR_CROP_SIZE);
+            ImageLoadResponse imageLoadResponse = fileService.loadImage(multipartFile, config.getAvatarsPath(),
+                    true, AVATAR_CROP_SIZE);
             if (imageLoadResponse.isResult()) {
                 photoPath = imageLoadResponse.getPath();
             } else {

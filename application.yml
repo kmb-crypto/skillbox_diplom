@@ -18,6 +18,8 @@ blog.announce.length: 150
 blog.captcha.lifetime.minutes: 5
 blog.captcha.width: 100
 blog.captcha.height: 35
+blog.min.title.length: 3
+blog.min.text.length: 50
 
 blog.restore.password.link.lifetime.minutes: 3
 

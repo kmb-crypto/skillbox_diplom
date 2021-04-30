@@ -1,8 +1,8 @@
 package main;
 
+import main.config.SpringConfig;
 import main.model.GlobalSetting;
 import main.repository.GlobalSettingsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -37,14 +37,15 @@ public class InitSettings {
 
     public static final String NO = "NO";
 
-    @Value("${upload.path}")
-    private String uploadPath;
 
-    @Value("${avatars.path}")
-    private String avatarsPath;
+    private final GlobalSettingsRepository globalSettingsRepository;
+    private final SpringConfig config;
 
-    @Autowired
-    private GlobalSettingsRepository globalSettingsRepository;
+    public InitSettings(final GlobalSettingsRepository globalSettingsRepository, final SpringConfig config) {
+        this.globalSettingsRepository = globalSettingsRepository;
+        this.config = config;
+    }
+
 
     @PostConstruct
     private void postConstruct() {
@@ -76,8 +77,8 @@ public class InitSettings {
             System.out.println("Global settings ok");
         }
 
-        uploadFilesPathCreate(uploadPath);
-        uploadFilesPathCreate(avatarsPath);
+        uploadFilesPathCreate(config.getUploadPath());
+        uploadFilesPathCreate(config.getAvatarsPath());
     }
 
     private void uploadFilesPathCreate(final String uploadPath) {
