@@ -25,8 +25,8 @@ blog.multiuser.mode: true
 blog.post.premoderation: true
 blog.statistic.is.public: false
 
-blog.email.sender: forrumdevpub@gmail.com
-blog.email.sender.password: burduninkonstantin
+blog.email.sender: ${SENDER_EMAIL_LOGIN}
+blog.email.sender.password: ${SENDER_EMAIL_PASSWORD}
 blog.email.sender.host: smtp.gmail.com
 blog.email.sender.port: 587
 blog.email.sender.protocol: smtp
