@@ -38,10 +38,10 @@ INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,v
 INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (29,1, 'ACCEPTED', 2, 'It’s no use going back to yesterday, because I was a different person then.' , CAST('2021-02-07 22:52:06.427' AS DateTime), 'BACK & FORCE', 2,1 );
 INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (30,1, 'ACCEPTED', 2, '<b>Это 30</b> <u>запись</u> <b>Imagination</b> is the only weapon in the war against reality.' , CAST('2021-02-07 22:53:06.427' AS DateTime), '30 запись', 4,2 );
 INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (31,1, 'NEW', null, 'Это 31 запись' , CAST('2021-02-08 22:38:06.427' AS DateTime), '31 запись', 0,3 );
-INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (32,0, 'NEW', null, 'Это 32 запись' , CAST('2021-05-08 22:38:06.427' AS DateTime), '32 запись', 0,1 );
-INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (33,0, 'NEW', null, 'Это 33 запись' , CAST('2021-05-08 22:48:06.427' AS DateTime), '33 запись', 0,3 );
-INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (34,1, 'NEW', null, 'Это 34 запись' , CAST('2021-05-08 22:38:06.427' AS DateTime), '34 запись', 0,1 );
-INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (35,1, 'ACCEPTED', 2, 'Это 35 запись' , CAST('2021-05-08 23:38:06.427' AS DateTime), '35 запись', 0,3 );
+INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (32,0, 'NEW', null, 'Это 32 запись' , CAST('2021-08-08 22:38:06.427' AS DateTime), '32 запись', 0,1 );
+INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (33,0, 'NEW', null, 'Это 33 запись' , CAST('2021-08-08 22:48:06.427' AS DateTime), '33 запись', 0,3 );
+INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (34,1, 'NEW', null, 'Это 34 запись' , CAST('2021-08-08 22:38:06.427' AS DateTime), '34 запись', 0,1 );
+INSERT INTO posts (id,is_active,moderation_status,moderator_id,text,time,title,view_count,user_id) VALUES (35,1, 'ACCEPTED', 2, 'Это 35 запись' , CAST('2021-08-08 23:38:06.427' AS DateTime), '35 запись', 0,3 );
 
 INSERT INTO post_votes (id,user_id, post_id, time, value) VALUES (1,2, 1, CAST('2019-06-30 19:33:06.427' AS DateTime),1);
 INSERT INTO post_votes (id,user_id, post_id, time, value) VALUES (2,1, 1, CAST('2019-06-30 19:34:06.427' AS DateTime),1);

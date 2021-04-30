@@ -3,7 +3,10 @@ package main.service;
 import main.InitSettings;
 import main.api.request.ModerationRequest;
 import main.api.request.PostRequest;
-import main.api.response.*;
+import main.api.response.ModerationResponse;
+import main.api.response.PostByIdResponse;
+import main.api.response.PostProcessingResponse;
+import main.api.response.PostsResponse;
 import main.dto.CommentsResponseDto;
 import main.dto.CommentsResponseUserDto;
 import main.dto.PostsResponseDto;
@@ -23,7 +26,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,44 +77,29 @@ public class PostService {
     public PostsResponse getPostsResponse(final Integer offset, final Integer limit, final String mode) {
         int count = postRepository.countAllAvailablePosts();
         if (count == 0) {
-            return new PostsResponse(count, new ArrayList<>());
-        } else {
-            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-            Collection<Post> postsCollection = new ArrayList<>();
-
-            switch (mode) {
-                case "best":
-                    postsCollection = postRepository.findBestPosts(PageRequest.of((offset / limit), limit));
-                    break;
-                case "popular":
-                    postsCollection = postRepository.findPopularPosts(PageRequest.of((offset / limit), limit));
-                    break;
-                case "recent":
-                    postsCollection = getTimeModePostCollection(PageRequest.of((offset / limit),
-                            limit, Sort.by(Sort.Direction.DESC, "time")));
-                    break;
-                case "early":
-                    postsCollection = getTimeModePostCollection(PageRequest.of((offset / limit),
-                            limit, Sort.by(Sort.Direction.ASC, "time")));
-            }
-            postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
-            return new PostsResponse(count, postsResponseDtoList);
+            return getEmptyPostResponse();
         }
+        switch (mode) {
+            case "best":
+                return getPostsPage(count, postRepository.findBestPosts(PageRequest.of((offset / limit), limit)));
+            case "popular":
+                return getPostsPage(count, postRepository.findPopularPosts(PageRequest.of((offset / limit), limit)));
+            case "recent":
+                return getPostsPage(count, getTimeModePostCollection(PageRequest.of((offset / limit),
+                        limit, Sort.by(Sort.Direction.DESC, "time"))));
+            case "early":
+                return getPostsPage(count, getTimeModePostCollection(PageRequest.of((offset / limit),
+                        limit, Sort.by(Sort.Direction.ASC, "time"))));
+        }
+        return getEmptyPostResponse();
     }
 
     public PostsResponse getPostsByDateResponse(final Integer offset, final Integer limit, final String date) {
         int count = postRepository.countAllAvailablePostsByDate(date);
         if (count == 0) {
-            return new PostsResponse(count, new ArrayList<>());
-        } else {
-            List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-            Collection<Post> postsCollection;
-
-            postsCollection = postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit));
-
-            postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
-            return new PostsResponse(count, postsResponseDtoList);
+            return getEmptyPostResponse();
         }
+        return getPostsPage(count, postRepository.findAllPostsByDate(date, PageRequest.of((offset / limit), limit)));
     }
 
     public PostsResponse getPostsByQueryResponse(final Integer offset, final Integer limit, String query) {
@@ -122,27 +109,16 @@ public class PostService {
         } else {
             int count = postRepository.countAllAvailablePostsByQuery(query);
             if (count == 0) {
-                return new PostsResponse(count, new ArrayList<>());
-            } else {
-                List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-                Collection<Post> postsCollection;
-
-                postsCollection = postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit));
-                postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
-
-                return new PostsResponse(count, postsResponseDtoList);
+                return getEmptyPostResponse();
             }
+            return getPostsPage(count,
+                    postRepository.findAllPostsByQuery(query, PageRequest.of((offset / limit), limit)));
         }
     }
 
     public PostsResponse getPostsByTagResponse(final Integer offset, final Integer limit, final String tag) {
-        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-        Collection<Post> postsCollection;
-
-        postsCollection = postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit));
-        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
-        return new PostsResponse(postRepository.countAllAvailablePostsByTag(tag), postsResponseDtoList);
-
+        return getPostsPage(postRepository.countAllAvailablePostsByTag(tag),
+                postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit)));
     }
 
     public PostByIdResponse getPostById(final int id, Principal principal) {
@@ -169,52 +145,29 @@ public class PostService {
         String email = principal.getName();
         int count = 0;
 
-        List<Post> postsCollection;
         switch (status) {
             case "inactive":
                 count = postRepository.countMyInactivePosts(email);
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository.findMyInactivePosts(email,
-                            PageRequest.of((offset / limit), limit));
-                    break;
-                }
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository.findMyInactivePosts(email,
+                        PageRequest.of((offset / limit), limit)));
             case "pending":
                 count = postRepository.countMyPendingPosts(email);
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository.findMyPendingPosts(email,
-                            PageRequest.of((offset / limit), limit));
-                    break;
-                }
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository.findMyPendingPosts(email,
+                        PageRequest.of((offset / limit), limit)));
             case "declined":
                 count = postRepository.countMyDeclinedPosts(email);
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository.findMyDeclinedPosts(email,
-                            PageRequest.of((offset / limit), limit));
-                    break;
-                }
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository.findMyDeclinedPosts(email,
+                        PageRequest.of((offset / limit), limit)));
             case "published":
                 count = postRepository.countMyPublishedPosts(email);
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository.findMyPublishedPosts(email,
-                            PageRequest.of((offset / limit), limit));
-                    break;
-                }
-            default:
-                postsCollection = new ArrayList<>();
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository.findMyPublishedPosts(email,
+                        PageRequest.of((offset / limit), limit)));
         }
-
-        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
-        return new PostsResponse(count, postsResponseDtoList);
-
+        return getEmptyPostResponse();
     }
 
     public PostsResponse getModerationPosts(
@@ -222,40 +175,23 @@ public class PostService {
         String email = principal.getName();
         int count = 0;
 
-        List<Post> postsCollection;
         switch (status) {
             case ("new"):
                 count = postRepository.countAllNewPosts();
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository.findAllNewPosts(PageRequest.of((offset / limit), limit));
-                    break;
-                }
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository.findAllNewPosts(PageRequest.of((offset / limit), limit)));
             case ("declined"):
                 count = postRepository.countDeclinedPostsByMe(email);
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository
-                            .findDeclinedPostsByMe(email, PageRequest.of((offset / limit), limit));
-                    break;
-                }
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository
+                        .findDeclinedPostsByMe(email, PageRequest.of((offset / limit), limit)));
             case ("accepted"):
                 count = postRepository.countAcceptedPostsByMe(email);
-                if (count == 0) {
-                    return new PostsResponse(0, new ArrayList<>());
-                } else {
-                    postsCollection = postRepository
-                            .findAcceptedPostsByMe(email, PageRequest.of((offset / limit), limit));
-                    break;
-                }
-            default:
-                postsCollection = new ArrayList<>();
+                return count == 0 ? getEmptyPostResponse()
+                        : getPostsPage(count, postRepository
+                        .findAcceptedPostsByMe(email, PageRequest.of((offset / limit), limit)));
         }
-        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
-        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
-        return new PostsResponse(count, postsResponseDtoList);
+        return getEmptyPostResponse();
     }
 
     public PostProcessingResponse createPost(final PostRequest postRequest, final Principal principal) {
@@ -294,7 +230,11 @@ public class PostService {
 
     // PRIVATE PART ---------------------------------------------------------------------------------------------------
 
-    private Collection<Post> getTimeModePostCollection(final Pageable pageable) {
+    private PostsResponse getEmptyPostResponse() {
+        return new PostsResponse(0, new ArrayList<>());
+    }
+
+    private List<Post> getTimeModePostCollection(final Pageable pageable) {
         return postRepository.findAllPosts(pageable);
     }
 
@@ -364,6 +304,12 @@ public class PostService {
         postByIdResponse.setTags(tagResponse);
 
         return postByIdResponse;
+    }
+
+    private PostsResponse getPostsPage(final int count, List<Post> postsCollection) {
+        List<PostsResponseDto> postsResponseDtoList = new ArrayList<>();
+        postsCollection.forEach(p -> postsResponseDtoList.add(postEntityToResponse(p)));
+        return new PostsResponse(count, postsResponseDtoList);
     }
 
     private String createAnnounce(final String text) {
