@@ -28,6 +28,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -121,22 +122,22 @@ public class PostService {
                 postRepository.findAllPostsByTag(tag, PageRequest.of((offset / limit), limit)));
     }
 
-    public PostByIdResponse getPostById(final int id, Principal principal) {
+    public Optional<PostByIdResponse> getPostById(final int id, Principal principal) {
         Post post = postRepository.findPostById(id);
 
         if (post == null) {
-            return null;
+            return Optional.empty();
         }
 
         if (principal != null) {
             User currentUser = userRepository.findByEmail(principal.getName()).get();
             if (currentUser.getIsModerator() == 1 || currentUser.getId() == post.getUser().getId()) {
-                return postEntityToResponseById(post, id);
+                return Optional.of(postEntityToResponseById(post, id));
             }
         }
 
         postRepository.updateViewCount(id);
-        return postEntityToResponseById(post, id);
+        return Optional.of(postEntityToResponseById(post, id));
     }
 
 
@@ -195,9 +196,9 @@ public class PostService {
     }
 
     public PostProcessingResponse createPost(final PostRequest postRequest, final Principal principal) {
-        HashMap<String, String> errors = checkPostRequest(postRequest);
-        if (errors != null) {
-            return new PostProcessingResponse(false, errors);
+        Optional<HashMap<String, String>> errors = checkPostRequest(postRequest);
+        if (errors.isPresent()) {
+            return new PostProcessingResponse(false, errors.get());
         } else {
             addNewPost(postRequest, principal);
             return new PostProcessingResponse(true);
@@ -205,9 +206,9 @@ public class PostService {
     }
 
     public PostProcessingResponse editPost(final int id, final PostRequest postRequest, final Principal principal) {
-        HashMap<String, String> errors = checkPostRequest(postRequest);
-        if (errors != null) {
-            return new PostProcessingResponse(false, errors);
+        Optional<HashMap<String, String>> errors = checkPostRequest(postRequest);
+        if (errors.isPresent()) {
+            return new PostProcessingResponse(false, errors.get());
         } else {
             Post editablePost = postRepository.findPostById(id);
             setEditablePost(editablePost, postRequest, principal);
@@ -319,7 +320,7 @@ public class PostService {
                 textWithoutHtml.substring(0, announceLength - 4) + "..." : textWithoutHtml;
     }
 
-    private HashMap<String, String> checkPostRequest(final PostRequest postRequest) {
+    private Optional<HashMap<String, String>> checkPostRequest(final PostRequest postRequest) {
         HashMap<String, String> errors = new HashMap<>();
         if (postRequest.getTitle().length() < minTitleLength) {
 
@@ -330,7 +331,7 @@ public class PostService {
             errors.put("text", "Текст публикации слишком короткий");
         }
 
-        return errors.size() > 0 ? errors : null;
+        return errors.size() > 0 ? Optional.of(errors) : Optional.empty();
     }
 
     private void addNewPost(final PostRequest postRequest, final Principal principal) {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 @Service
 public class StatisticService {
@@ -28,14 +29,14 @@ public class StatisticService {
         return statisticNative2Response(statisticNative);
     }
 
-    public StatisticResponse getAllStatisticResponse(final Principal principal) {
+    public Optional<StatisticResponse> getAllStatisticResponse(final Principal principal) {
 
         if (globalSettingsRepository.findByCode(InitSettings.STATISTIC_IS_PUBLIC_CODE).getValue().equals(InitSettings.NO)) {
             if (principal == null || userRepository.findByEmail(principal.getName()).get().getIsModerator() == 0) {
-                return null;
+                return Optional.empty();
             }
         }
-        return statisticNative2Response(userRepository.getAllStatistic());
+        return Optional.of(statisticNative2Response(userRepository.getAllStatistic()));
     }
 
     private StatisticResponse statisticNative2Response(final StatisticNative statisticNative) {

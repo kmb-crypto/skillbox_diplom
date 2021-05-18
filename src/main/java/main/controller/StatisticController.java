@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -31,8 +32,8 @@ public class StatisticController {
 
     @GetMapping(value = "/statistics/all")
     public ResponseEntity getAllStatistic(final Principal principal) {
-        StatisticResponse statisticResponse = statisticService.getAllStatisticResponse(principal);
-        return statisticResponse == null ? ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null) :
-                new ResponseEntity(statisticResponse, HttpStatus.OK);
+        Optional<StatisticResponse> statisticResponse = statisticService.getAllStatisticResponse(principal);
+        return statisticResponse.isEmpty() ? ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null) :
+                new ResponseEntity(statisticResponse.get(), HttpStatus.OK);
     }
 }
